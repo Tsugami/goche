@@ -14,7 +14,7 @@ module.exports = class httpManager {
                 method: method,
                 headers: {
                     Authorization: `Bot ${this.gocheLibrary.token}`,
-                    'User-Agent': 'Discord Bot (https://github.com/NavyCake)',
+                    'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
                     'Content-Type': 'application/json',
                     'X-RateLimit-Precision': 'millisecond'
                 },
@@ -36,7 +36,7 @@ module.exports = class httpManager {
                 return axios.patch(`https://discord.com/api/v8/${path}`,  data, {
                     headers: {
                         Authorization: `Bot ${this.gocheLibrary.token}`,
-                        'User-Agent': 'Discord Bot (https://github.com/NavyCake)',
+                        'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
                         'Content-Type': 'application/json',
                         'X-RateLimit-Precision': 'millisecond'
                     }
@@ -59,7 +59,7 @@ module.exports = class httpManager {
                     method: method,
                     headers: {
                         Authorization: `Bot ${this.gocheLibrary.token}`,
-                        'User-Agent': 'Discord Bot (https://github.com/NavyCake)',
+                        'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
                         'Content-Type': 'application/json',
                         'X-RateLimit-Precision': 'millisecond'
                     }
@@ -84,7 +84,7 @@ module.exports = class httpManager {
         return axios.post(`https://discord.com/api/v8/${path}`, data, {
             headers: {
                 Authorization: `Bot ${this.gocheLibrary.token}`,
-                'User-Agent': 'Discord Bot (https://github.com/NavyCake)',
+                'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
                 'Content-Type': 'application/json',
                 'X-RateLimit-Precision': 'millisecond'
             },
@@ -105,7 +105,7 @@ module.exports = class httpManager {
         return axios.get(`https://discord.com/api/v8/${path}`, {
             headers: {
                 Authorization: `Bot ${this.gocheLibrary.token}`,
-                'User-Agent': 'Discord Bot (https://github.com/NavyCake)',
+                'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
                 'Content-Type': 'application/json',
                 'X-RateLimit-Precision': 'millisecond'
             }
