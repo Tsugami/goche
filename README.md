@@ -10,7 +10,7 @@ When the bot starts, it loads the entire cache before starting the Websocket con
 Discord API documentation needs to be read before starting to get your hands dirty in the library. Before we start, see the Discord documents.
 
 
-##   Suporte
+##   Support
 This library is not an official Discord package however it may not have enough support to give it to you. So you need to go through the entire library and the documentation you have in the folders to understand the library a little better. This library there are no mysteries are almost the same functions as other library written in Javascript
 
 
