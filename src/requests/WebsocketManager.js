@@ -37,7 +37,6 @@ module.exports = class WebsocketManager {
                     d: {
                         token: this.gocheClient.token,
                         intents: 513 + 4096 + 16384 + 128 + 1024,
-                        shards: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
                         properties: {
                             '$os': 'linux',
                             '$browser': 'Goche - https://github.com/NavyCake/Goche',
