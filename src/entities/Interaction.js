@@ -19,7 +19,7 @@ module.exports = class Interaction {
         this.channel = this.guild.channels.get(this.channelID)
         this.applicationID = interaction.application_id
         this.application = this.gocheLibrary.client.selfUser
-        this.command = new CommandInteraction(interaction)
+        this.command = new CommandInteraction(interaction.data)
     }
 
 
