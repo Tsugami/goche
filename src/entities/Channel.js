@@ -45,7 +45,15 @@ module.exports = class Channel {
     async sendMessage(content) {
         let dataMessage = {}
         if (typeof content === 'object') {
+            const goche = this.gocheLibrary
+            const guild = this.guild
+            await this.gocheLibrary.requestManager.postRequest(`channels/${this.id}/messages`, async function(res) {
+               res.data.guild = guild
+               
+                const message = new Message(res.data, guild, goche)
+                dataMessage = message
             
+            }, content)
         } else {
             const goche = this.gocheLibrary
             const guild = this.guild
