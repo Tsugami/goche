@@ -8,7 +8,7 @@ module.exports = class CommandInteraction {
         this.id = command.data.id
         this.options = new Array()
         this.noArgs = false
-        if (command.data.options >= 0) {
+        if (command.data.options.length >= 0) {
             command.data.options.map(e => {
                 this.options.push(new CommandArgs(e))
             })
