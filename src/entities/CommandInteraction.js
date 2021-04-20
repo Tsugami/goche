@@ -11,11 +11,11 @@ module.exports = class CommandInteraction {
         this.noArgs = false
         if (this.haveOptions === true) {
             if (command.options >= 0) {
+                this.noArgs = true
+            } else {
                 command.options.map(e => {
                     this.options.push(new CommandArgs(e))
                 })
-            } else {
-                this.noArgs = true
             }
           
         } else {
