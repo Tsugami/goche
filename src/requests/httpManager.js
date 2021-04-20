@@ -1,5 +1,4 @@
 const { default: axios } = require('axios')
-const https = require('https')
 
 module.exports = class httpManager {
     constructor(gocheLibrary) {
@@ -22,12 +21,13 @@ module.exports = class httpManager {
             })
             .then(res => {
                 if (res.status === 429) {
+                    this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                     return {
                         ratelimit: true
                     }
                 }
                 response(res)
-              
+                this.gocheLibrary.gocheClient.heartbeart.requests++
             })
             .catch(error => response(error))
             break;
@@ -44,13 +44,14 @@ module.exports = class httpManager {
                 })
                 .then(res => {
                     if (res.status === 429) {
+                        this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                         return {
                             ratelimit: true
                         }
                     }
               
                     response(res)
-                  
+                    this.gocheLibrary.gocheClient.heartbeart.requests++
                 })
                 .catch(error => response(error))
                 break;
@@ -67,6 +68,7 @@ module.exports = class httpManager {
                 }, data)
                 .then(res => {
                     if (res.status === 429) {
+                        this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                         return {
                             ratelimit: true
                         }
@@ -91,11 +93,10 @@ module.exports = class httpManager {
         })
         .then(res => {
             if (res.status === 429) {
+                this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                 return
             } else {
                 response(res)
-                delete res.data
-         
             }
         })
         .catch(error => response(error))
@@ -110,7 +111,13 @@ module.exports = class httpManager {
                 'X-RateLimit-Precision': 'millisecond'
             }
         })
-        .then(res => response(res))
-        .catch(error => response(error))
+        .then(res => {
+            this.gocheLibrary.gocheClient.heartbeart.ratelimit++
+            response(res)
+        })
+        .catch(error => {
+            
+            response(error)
+        })
     }
 }

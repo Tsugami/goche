@@ -1,5 +1,6 @@
 const SelfUser = require('../entities/SelfUser')
 const GocheLibrary = require('../GocheLibrary')
+const Heartbeart = require('../internal/Heartbeart')
 const WebsocketManager = require('../requests/WebsocketManager')
 
 
@@ -10,6 +11,7 @@ module.exports = class GocheClient {
     constructor(profile, goche = new GocheLibrary()) {
         this.profile = profile
         this.goche = goche
+        this.heartbeart = new Heartbeart(this)
         this.token =  this.goche.token
         Object.defineProperty(this, 'token', {
             configurable: false,

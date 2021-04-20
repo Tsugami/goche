@@ -1,5 +1,5 @@
-const Member = require("./Member")
-const VoiceChannel = require("./VoiceChannel")
+const Member = require('./Member')
+const VoiceChannel = require('./VoiceChannel')
 
 
 

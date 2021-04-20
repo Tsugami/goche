@@ -1,4 +1,5 @@
 const MessageQueue = require('../action/message/MessageQueue')
+const Interaction = require('./Interaction')
 const User = require('./User')
 
 const type = {
@@ -19,6 +20,7 @@ module.exports = class Message {
         this.guild = guild
         this.id = message.id
         this.type = type[message.type] || 'unknown'
+        this.isInteraction = typeof this.interaction === 'object' ? true : false
         this.content = message.content || ''
         this.tts = message.tts || false
         this.timestamp = Date.parse(message.timestamp) || 0
@@ -36,5 +38,15 @@ module.exports = class Message {
         this.user = new User(message.author)
         this.attachments = message.attachments
         this.messageQueue = new MessageQueue(this)
+        
+
+        /**
+         * Interaction support for Slash Commands. Using type 20 which is a webhook message.
+         */
+        if (this.type === 20) {
+            if (typeof this.interaction === 'object') {
+                this.interaction = new Interaction(message.interaction)
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ const Payload = require('../utils/Payload')
 const VoiceChannel = require('../entities/VoiceChannel')
 const VoiceState = require('../entities/VoiceState')
 const MemberState = require('../entities/MemberState')
+const Interaction = require('../entities/Interaction')
 
 module.exports = class GocheController { 
     constructor(gocheLibrary = new GocheLibrary()) {
@@ -27,6 +28,8 @@ module.exports = class GocheController {
                         this.gocheClient.goche.listenerManager.listeners
                         .filter((eventClass) => eventClass.eventName === `${data.t}`)
                         .map((eventClass) => eventClass.on(data))
+
+                        this.gocheLibrary.slashManager.build()
                     break;
                     case 'MESSAGE_CREATE':
 
@@ -70,7 +73,7 @@ module.exports = class GocheController {
                        
                     break;
                     default:
-                     // console.log(data)
+    
 
                 }
             break
@@ -121,13 +124,21 @@ module.exports = class GocheController {
                         this.voiceState(data)
                     break;
                     default:
-         
+                    case 'INTERACTION_CREATE':
+                        this.intereactionCreate(data)
+                    break;
 
                 }
             break;
         }
     }
 
+
+    async intereactionCreate(data) {
+        await this.gocheClient.goche.listenerManager.listeners
+        .filter((eventClass) => eventClass.eventName === `${data.t}`)
+        .map((eventClass) => eventClass.on(new Interaction(data.d, this.gocheLibrary)))
+    }
 
 
     async guildCreate(data) {
