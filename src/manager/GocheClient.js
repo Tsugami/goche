@@ -2,6 +2,7 @@ const SelfUser = require('../entities/SelfUser')
 const GocheLibrary = require('../GocheLibrary')
 const Heartbeart = require('../internal/Heartbeart')
 const WebsocketManager = require('../requests/WebsocketManager')
+const IntentsManager = require('./IntentsManager')
 
 
 module.exports = class GocheClient {
@@ -22,6 +23,7 @@ module.exports = class GocheClient {
         this.guilds = new Map()
         this.intents = 33554432
         this.wsManager = new WebsocketManager(this)
+        this.intentManager = new IntentsManager()
         this.selfUser = null
         
     }

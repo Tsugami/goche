@@ -22,6 +22,7 @@ module.exports = class GocheController {
             case 'light':
                 
                 switch (data.t) {
+                    
                     case 'READY': 
                         this.gocheClient.selfUser = new SelfUser(data.d)
                         this.data = data.d

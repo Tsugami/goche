@@ -25,6 +25,7 @@ module.exports = class WebsocketManager {
     connect() {
         
         this.ws.on('open', async (data) => {
+          
             this.ready = true
             await this.ws.send(JSON.stringify({
                 op: 1,
@@ -35,7 +36,7 @@ module.exports = class WebsocketManager {
                     op: 2,
                     d: {
                         token: this.gocheClient.token,
-                        intents: 513 + 4096 + 16384 + 128 + 1024 + 16,
+                        intents: this.gocheClient.intentManager.intents,
                         properties: {
                             '$os': 'linux',
                             '$browser': 'Goche - https://github.com/NavyCake/Goche',
@@ -52,7 +53,11 @@ module.exports = class WebsocketManager {
   
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
+            console.log(data)
             this.gocheClient.heartbeart.wsReceivedMessage++
+            if (typeof data.s === 'number') {
+                this.gocheClient.heartbeart.seq = data.s
+            }
             switch(data.op) {
                 case 10:
                     const sendHeart = async() => {

@@ -57,10 +57,12 @@ module.exports = class GocheLibrary {
      * @param {*} intents 
      * @returns GocheLibrary
      */
-    setIntents(intents = []) {
+    setIntents(intents = ['']) {
+        console.log(intents)
         if (typeof intents === 'object') {
-         
-         
+            for (let intent of intents) {
+                this.client.intentManager.add(intent)
+            }
         }
         return this
     }
