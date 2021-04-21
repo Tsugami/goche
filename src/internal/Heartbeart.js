@@ -1,6 +1,7 @@
 module.exports = class Heartbeart {
     constructor(gocheClient) {
         this.gocheClient = gocheClient
+        this.uptime = 0
         this.seq = 0
         this.ping - 0
         this.attempts = 0

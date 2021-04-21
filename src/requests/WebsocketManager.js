@@ -37,6 +37,7 @@ module.exports = class WebsocketManager {
                     d: {
                         token: this.gocheClient.token,
                         intents: this.gocheClient.intentManager.intents,
+                        shards: [0, 1],
                         properties: {
                             '$os': 'linux',
                             '$browser': 'Goche - https://github.com/NavyCake/Goche',
@@ -49,14 +50,14 @@ module.exports = class WebsocketManager {
         this.ws.on('close', (data) => {
             this.ready = false
          })
-     
-  
+    
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
-            console.log(data)
+            
+            
             this.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
-                this.gocheClient.heartbeart.seq = data.s
+                this.gocheClient.heartbeart.seq++
             }
             switch(data.op) {
                 case 10:
@@ -70,6 +71,9 @@ module.exports = class WebsocketManager {
                         sendHeart()
                     }, data.d.heartbeat_interval) 
                     break;
+                case 7:
+                    this.reconnect()
+                    break;
                 default:
                     this.gocheClient.goche.gocheController.updateCache(data)
                 delete data.d
@@ -77,5 +81,26 @@ module.exports = class WebsocketManager {
             }
         })
      return this;
+
+
     }
+
+
+    /**
+     * @prop { t: null, s: null, op: 7, d: null }
+     *These types of connections can be used when there is instability in the connection or Discord disconnects because it is not in session!
+     */
+    reconnect() {
+        this.ws.send(JSON.stringify({
+            op: 6,
+            d: {
+                token: this.gocheClient.goche.token,
+                session_id: this.gocheClient.selfUser.sessionID,
+                seq: this.gocheClient.heartbeart.seq
+            }
+        }))
+    }
+
+
+
 }
