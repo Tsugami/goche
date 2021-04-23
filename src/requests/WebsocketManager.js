@@ -14,7 +14,7 @@ module.exports = class WebsocketManager {
 
     constructor(client = new GocheClient()) {
         this.gocheClient = client
-        this.ws = new Websocket("wss://gateway.discord.gg/?v=6&encoding=json")
+        this.ws = new Websocket("wss://gateway.discord.gg/?v=8&encoding=json")
         this.data = {
             guilds: []
         }
@@ -27,12 +27,8 @@ module.exports = class WebsocketManager {
     }
 
     connect() {
-        
-        this.ws.on('open', async (data) => {
-            this.identify()
-           
-        })
-
+      
+        this.ws.on('open', (ws) => this.identify())
 
         this.ws.on('close', (ws, code, reason) => {
             this.ready = false
@@ -40,7 +36,7 @@ module.exports = class WebsocketManager {
     
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
-
+      
             this.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
                 this.gocheClient.heartbeart.seq++
@@ -50,24 +46,16 @@ module.exports = class WebsocketManager {
                     this.gocheClient.ping = Date.now() - this.lantecy
                 break;
                 case 10:
+                 
+           
                     const sendHeart = async() => {
                         this.lantecy = Date.now()
-                
+               
                         await this.ws.send(JSON.stringify({
                             'op': 1,
                             'd': this.gocheClient.heartbeart.seq
                         }))
-                        await this.ws.send(JSON.stringify({
-                            op: 3,
-                            d: {
-                                activities: [
-                                    this.gocheClient.goche.activities.presenceWS()
-                                ],
-                                status: this.gocheClient.goche.activities.status,
-                                since: this.gocheClient.goche.activities.since,
-                                afk: false
-                            }
-                        }))
+                   
                        
                     } 
                     
@@ -91,15 +79,16 @@ module.exports = class WebsocketManager {
 
     }
 
+    revokedToken() {
+       this.identify()
+    }
+
     setActivities(activities) {
         this.ws.send(JSON.stringify({
             op: 3,
             d: {
-                activities: [
-                    this.gocheClient.goche.activities.presenceWS()
-                ],
+                game:  this.gocheClient.goche.activities.presenceWS(),
                 status: this.gocheClient.goche.activities.status,
-                since: this.gocheClient.goche.activities.since,
                 afk: false
             }
         }))
@@ -111,18 +100,18 @@ module.exports = class WebsocketManager {
      *These types of connections can be used when there is instability in the connection or Discord disconnects because it is not in session!
      */
     reconnect(op, message, reason) {
-  
         switch(op) {
             case 9: 
                 this.resuming(message)
             break;
             case 7:
                 if (this.ready === true) {
+                    clearInterval(this.heart) 
                     this.ws.close(4901)
                 } else {
                     this.ws.close(1000)
                 }
-                clearInterval(this.heart) 
+               
             break;
         }
 
@@ -153,44 +142,42 @@ module.exports = class WebsocketManager {
         return this
     }
 
+ 
+
     
      async identify() {
         this.ready = true
 
-        await this.ws.send(JSON.stringify({
-            op: 1,
-            d: this.gocheClient.heartbeart.seq
-        }))
        
         await this.ws.send(
+   
             JSON.stringify({
                 op: 2,
                 d: {
                     token: this.gocheClient.token,
                     intents: this.gocheClient.intentManager.intents,
-                    shards: 1,
-                    session_start_limit: {
-                        total: 1000,
-                        remaining: 993,
-                        reset_after: 34236143,
-                        max_concurrency: 1
-                    },
+                    v: 8,
+                    guild_subscriptions: true,
                     presence: {
-                        activities: [
-                            this.gocheClient.goche.activities.presenceWS()
-                        ],
+                        game:  this.gocheClient.goche.activities.presenceWS(),
                         status: this.gocheClient.goche.activities.status,
-                        since: this.gocheClient.goche.activities.since,
+                 
                         afk: false
                     },
+            
                     properties: {
-                        '$os':  process.platform,
-                        '$browser': 'Goche - https://github.com/NavyCake/Goche',
-                        '$device': 'Goche - https://github.com/NavyCake/Goche'
+                        os:  process.platform,
+                        browser: 'Goche - https://github.com/NavyCake/Goche',
+                        device: 'Goche - https://github.com/NavyCake/Goche'
                     }
                 }
             })
         )
+
+        await this.ws.send(JSON.stringify({
+            'op': 1,
+            'd': this.gocheClient.heartbeart.seq
+        }))
     }
 
 
