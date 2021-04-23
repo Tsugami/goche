@@ -1,5 +1,5 @@
 {
-  "name": "goche-library",
+  "name": "@goche/discord",
   "version": "0.0.1",
   "description": "A library made in Javascript using Discord API",
   "main": "index.js",

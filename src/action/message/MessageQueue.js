@@ -4,6 +4,10 @@ const Message = require('../../entities/Message');
 
 
 module.exports = class MessageQueue {
+    /**
+     * 
+     * @description This class will improve in the search for methods and also to facilitate the use of requests and to organize the code.
+     */
     constructor(message = new Message()) {
         this.message = message
     }
@@ -18,9 +22,13 @@ module.exports = class MessageQueue {
         })
     }
 
-    /**
-     * 
-     * @returns This action may contain errors if the text channel is closed or you are not allowed to type!
+     /**
+     * @description Create a message in the text channel.
+     * @param {*} content 
+     * @example
+     * ```
+     * channel.sendMessage('Hello').messageQueue.edit('test')
+     * ```
      */
     async edit(content) {
         let data = {    }
@@ -50,6 +58,19 @@ module.exports = class MessageQueue {
 
          
         return this.message
+    }
+
+    
+     /**
+     * @description Method was created to delete message
+     * @param {*} time 
+     * @example
+     * ```
+     * channel.sendMessage('Hello').messageQueue.delete()
+     * ```
+     */
+    async delete(time) {
+        
     }
 
     messageReference() {

@@ -1,6 +1,5 @@
 
 
-
 module.exports = class Guild {
     constructor(guild) {
         this.id = guild.id || ''
@@ -38,4 +37,95 @@ module.exports = class Guild {
         this.maxVideoChannelUsers = guild.max_video_channel_users
         this.welcomeScreen = ''
     }
+
+
+    ban(member, options = {}) {
+        
+    }
+
+
+    getUserByID(id) {
+        return this.members.get(id)
+    }
+
+    getUserByTAG(tag) {
+        if (Object.values(this.members).filter((e) => e.user.tag === tag).length === 0) {
+            return null
+        } else {
+            return Object.values(this.members).filter((e) => e.user.tag === tag)[0]
+        } 
+    }
+
+    getUsersByDiscriminator(discriminator) {
+        if (Object.values(this.members).filter((e) => e.user.discriminator === discriminator).length === 0) {
+            return []
+        } else {
+            return Object.values(this.members).filter((e) => e.user.discriminator === discriminator)
+        }
+    }
+
+    getUserByUsername(username) {
+        if (Object.values(this.members).filter((e) => e.user.username === username).length === 0) {
+            return []
+        } else {
+            return Object.values(this.members).filter((e) => e.user.username === username)
+        }
+    }
+
+
+    getChannelByID(id) {
+        return this.channels.get(id)
+    }
+
+    getChannelByTAG(tag) {
+        if (Object.values(this.channels).filter((e) => e.user.tag === tag).length === 0) {
+            return null
+        } else {
+            return Object.values(this.channels).filter((e) => e.user.tag === tag)[0]
+        } 
+    }
+
+    getChannelsByName(name) {
+        if (Object.values(this.channels).filter((e) => e.name === name).length === 0) {
+            return []
+        } else {
+            return Object.values(this.channels).filter((e) => e.name === name)[0]
+        }
+    }
+
+    getChannelsByID(id) {
+        if (Object.values(this.channels).filter((e) => e.id === id).length === 0) {
+            return []
+        } else {
+            return Object.values(this.channels).filter((e) => e.id === id)[0]
+        }
+    }
+
+    getChannelsByTopic(topic) {
+        if (Object.values(this.members).filter((e) => e.topic === topic).length === 0) {
+            return []
+        } else {
+            return Object.values(this.members).filter((e) => e.topic === topic)
+        }
+    }
+
+
+    getVoiceByName(name) {
+        if (Object.values(this.voiceChannels).filter((e) => e.name === name).length === 0) {
+            return []
+        } else {
+            return Object.values(this.voiceChannels).filter((e) => e.name === name)[0]
+        }
+    }
+
+    getVoiceByID(id) {
+        if (Object.values(this.voiceChannels).filter((e) => e.id === id).length === 0) {
+            return []
+        } else {
+            return Object.values(this.voiceChannels).filter((e) => e.id === id)
+        }
+    }
+
+  
+    
 }

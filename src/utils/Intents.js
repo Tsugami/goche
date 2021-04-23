@@ -17,7 +17,7 @@ module.exports = {
 
         directMessages: 1 << 12,
         directMessageReaction: 1 << 13,
-        direactMessageTyping: 1 << 14
+        directMessageTyping: 1 << 14
 
 
 
