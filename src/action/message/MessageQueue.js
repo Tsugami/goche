@@ -26,7 +26,14 @@ module.exports = class MessageQueue {
         let data = {    }
       
         if (typeof content === 'object') {
-
+            await this.message.gocheLibrary.requestManager.otherRequest(
+                'patch', 
+                `channels/${this.message.channelID}/messages/${this.message.id}`, 
+                function response(res) {}, {
+                    content: content
+                }
+            )
+            this.message = content
         } else {
             
            

@@ -28,9 +28,8 @@ module.exports = class Channel {
         this.name = this.channel.name
         this.topic = this.channel.topic || ''
         this.nsfw = this.channel.nsfw === undefined ? false : this.channel.nsfw
-        this.lastMessageID = this.channel.last_message_id
-        
-    
+        this.lastMessageID = this.channel.last_message_id 
+        this.messagesQueue = new Map()
     }
     /**
      * 

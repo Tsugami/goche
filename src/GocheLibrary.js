@@ -5,6 +5,7 @@ const httpManager = require('./requests/httpManager')
 const ShardingController = require('./sharding/ShardingController')
 const GocheController = require('./hooks/GocheController')
 const SlashManager = require('./action/guild/SlashCommand')
+const Activities = require('./action/user/Activities')
 
 
 
@@ -29,6 +30,9 @@ module.exports = class GocheLibrary {
         this.requestManager = new httpManager(this)
         this.gocheController = new GocheController(this)
         this.slashManager = new SlashManager(this)
+        this.activities = new Activities()
+                                .setStatus('online')
+        
 
     }
 
@@ -57,8 +61,7 @@ module.exports = class GocheLibrary {
      * @param {*} intents 
      * @returns GocheLibrary
      */
-    setIntents(intents = ['']) {
-        console.log(intents)
+    setIntents(intents = ['']) { 
         if (typeof intents === 'object') {
             for (let intent of intents) {
                 this.client.intentManager.add(intent)
@@ -76,6 +79,22 @@ module.exports = class GocheLibrary {
       
         }
         return this
+    }
+    
+
+    /**
+     * 
+     * @param {*} activities Recommended to use the Activities class
+     */
+    setActivities(activities) {
+        if (typeof activities === 'object') {
+            if (activities instanceof Activities) {
+               this.activities = activities
+               if (this.client.wsManager.ready === true) {
+                   this.client.wsManager.setActivities()
+               }
+            }
+        }
     }
 
     
