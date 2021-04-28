@@ -11,7 +11,7 @@ const Activities = require('./action/user/Activities')
 
 module.exports = class GocheLibrary {
     /**
-     * @param {*} token This token is used to connect Websocket and create requests. 
+     * @param {*} token This token is used to connect **Websocket** and **create requests**. 
      */
     constructor(token = '') {
         this.mode = 'default'
@@ -32,6 +32,7 @@ module.exports = class GocheLibrary {
         this.slashManager = new SlashManager(this)
         this.activities = new Activities()
                                 .setStatus('online')
+        
 
     }
 
@@ -46,7 +47,14 @@ module.exports = class GocheLibrary {
     }
 
     /**
-     *  @GocheLibrary This profile will release and store the metadata in a cache that is picked up by the listeners. You can add it via the addListener method.
+     *  @GocheLibrary This profile will release and store the metadata in a cache that is picked up by the `listeners`. 
+     * You can add it via the `addListener` method.
+     * 
+     * 
+     * ```
+     * const goche = new GocheLibrary()
+     *                  .addListener(new Ready())
+     * ```
      */
     createProfile() {
         this.mode = 'profile'
@@ -59,11 +67,41 @@ module.exports = class GocheLibrary {
     /**
      * @param {*} intents 
      * @returns GocheLibrary
+     * @description If you are placing an invalid intent, it will not be counted and will also not return any errors. The chances of connecting are small.
+     * @example
+     * ```
+     *  const goche = new GocheLibrary()
+     *                  .setIntents(
+     *                          [
+     *                             'guild',
+     *                             'guildMembers'
+     *                          ]
+     *                  )
+     * ```
+     * @Intents
+     * ```
+     *  directMessageReaction: 8192
+        directMessageTyping: 16384
+        directMessages: 4096
+        guildBan: 4
+        guildEmoji: 8
+        guildIntegrations: 16
+        guildInvites: 64
+        guildMembers: 2
+        guildMessage: 512
+        guildMessageReaction: 1024
+        guildMessageTyping: 2048
+        guildPresence: 256
+        guildVoiceState: 128
+        guildWebhook: 32
+        guilds: 1
+     * ```
      */
-    setIntents(intents = []) {
+    setIntents(intents = ['']) { 
         if (typeof intents === 'object') {
-         
-         
+            for (let intent of intents) {
+                this.client.intentManager.add(intent)
+            }
         }
         return this
     }
@@ -71,12 +109,46 @@ module.exports = class GocheLibrary {
     /**
      * @param {*} caches 
      * @returns GocheLibrary
+     * @description You can `limit` Goche to some events that are `received` by the `Websocket`. 
+     * Remembering some methods may not work because certain events may `NOT WORK`.
+     * @example
+     *  ```
+     * const goche = new GocheLibrary()
+     *                  .ignoreCache(['ready', 'updateGuild'])
+     * ```
      */
      ignoreCache(caches = []) {
         if (typeof caches === 'object') {
       
         }
         return this
+    }
+    
+
+    /**
+     * 
+     * @param {*} activities Recommended to use the Activities class
+     * @description This method only works with the Activities class that provides options for you to work. 
+     * Also if you insert anything the method can ignore it and the results cannot go as you think.
+     * @example
+     * ```
+     *  const goche = new setActivities()
+     *                  .setIntents(
+     *                          new Activities()
+     *                                  .setListening('Hello World')
+     *                                  .setStatus('online')
+     *                  )
+     * ```
+     */
+    setActivities(activities) {
+        if (typeof activities === 'object') {
+            if (activities instanceof Activities) {
+               this.activities = activities
+               if (this.client.wsManager.ready === true) {
+                   this.client.wsManager.setActivities()
+               }
+            }
+        }
     }
 
     

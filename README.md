@@ -1,5 +1,16 @@
-# Goche
+# 💻 Goche
 This library was developed for API Discord that provides options and ways to work with ease. I am setting up this project just for the sake of resources for my projects. The library is free and publishes so that everyone can use it. Read the license before using it again. This is important.
+
+## Features
+- You can extend the event class. 🔥
+- Request Marker and Events received / sent by Websocket are marked. 👌
+- Management in Slash Command. 
+- Method available for you to code free, and in control. 🎉
+- Better management at Sharding 
+- You can disable events that you don't want to capture
+- Soon Goche will provide a personalized profile to have memory control.
+- Have control in the cache
+- 📦 Support for Goche-Cli (Custom and prepared Logger) [Click here](https://github.com/NavyCake/goche-cli)
 
 
 ## How does the library work?

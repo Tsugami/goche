@@ -22,7 +22,9 @@ module.exports = class GocheController {
             case 'light':
                 
                 switch (data.t) {
+                    
                     case 'READY': 
+                        this.gocheClient.uptime = Date.now()
                         this.gocheClient.selfUser = new SelfUser(data.d)
                         this.data = data.d
                         this.gocheClient.goche.listenerManager.listeners
@@ -47,7 +49,7 @@ module.exports = class GocheController {
                         }
                     break;
                     case 'GUILD_CREATE':
-                     
+                        
                     break;
                     case 'CHANNEL_CREATE': 
                         const channel = new Channel(data.d, this.gocheLibrary)
@@ -57,20 +59,18 @@ module.exports = class GocheController {
                         .map((eventClass) => eventClass.on(channel))
                     break;
                     case 'CHANNEL_DELETE': 
-                   
+                        
                         this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
                         await this.gocheClient.goche.listenerManager.listeners
                         .filter((eventClass) => eventClass.eventName === `${data.t}`)
                         .map((eventClass) => eventClass.on(channel))
                     break;
                     case 'CHANNEL_UPDATE': 
-                      
                         this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
                         this.gocheClient.guilds.get(data.d.guild_id).channels.set(channel.id, channel)
                         await this.gocheClient.goche.listenerManager.listeners
                         .filter((eventClass) => eventClass.eventName === `${data.t}`)
                         .map((eventClass) => eventClass.on(channel))
-                       
                     break;
                     default:
     
@@ -86,6 +86,7 @@ module.exports = class GocheController {
                         this.gocheClient.goche.listenerManager.listeners
                         .filter((eventClass) => eventClass.eventName === `${data.t}`)
                         .map((eventClass) => eventClass.on(data))
+
                     break;
                     case 'MESSAGE_CREATE':
                 
@@ -143,7 +144,7 @@ module.exports = class GocheController {
 
     async guildCreate(data) {
         if (this.data.guilds.filter((guild) => guild.id === data.d.id).length === 0) {
-            const guild = new Guild(data.d)
+            const guild = new Guild(data.d, this.gocheClient)
             for (let channel of data.d.channels) {
                 if (channel.type === 4) {
                     guild.category.set(channel.id, new Channel(channel, guild, this.gocheClient.goche))
@@ -162,9 +163,9 @@ module.exports = class GocheController {
             await this.gocheClient.guilds.set(data.d.id, guild)
             await this.gocheClient.goche.listenerManager.listeners
             .filter((eventClass) => eventClass.eventName === `${data.t}`)
-            .map((eventClass) => eventClass.on(new Guild(data.d)))
+            .map((eventClass) => eventClass.on(new Guild(data.d, this.gocheClient)))
         } else {
-            const guild = new Guild(data.d)
+            const guild = new Guild(data.d, this.gocheClient)
             for (let channel of data.d.channels) {
                 if (channel.type === 4) {
                     guild.category.set(channel.id, new Channel(channel, guild, this.gocheClient.goche))
@@ -263,7 +264,7 @@ module.exports = class GocheController {
                      .map((eventClass) => eventClass.on({
                          stateVoice: stateVoice,
                          memberState: stateUserVoice,
-                         channel: stateVoice.voiceChannel,
+                          channel: stateVoice.voiceChannel,
                          isMoved: isMoved
                      }))
              }
@@ -293,7 +294,6 @@ module.exports = class GocheController {
         const channel = new Channel(data.d, guild, this.gocheLibrary)
         switch (data.d.type) {
             case 2:
-     
                 this.gocheClient.guilds.get(data.d.guild_id).voiceChannels.set(voiceChannel.id, voiceChannel)
                 await this.gocheClient.goche.listenerManager.listeners
                 .filter((eventClass) => eventClass.eventName === `${data.t}`)
@@ -321,23 +321,53 @@ module.exports = class GocheController {
         const guild = this.gocheClient.guilds.get(data.d.guild_id)
         const voiceChannel = new VoiceChannel(data.d, this.gocheLibrary)
         const channel = new Channel(data.d, guild, this.gocheLibrary)
+
+     
+
         switch (data.d.type) {
             case 2:
-           
+                try {
+                    if (typeof this.gocheClient.guilds.get(data.d.guild_id) === 'object') {
+                        if (typeof guild.voiceChannels.get(data.d.channel_id) === 'object') {
+                            this.gocheClient.cacheManager.cacheRemoved++
+                            guild.voiceChannels.delete(data.d.channel_id)
+                        }
+                    }
+                } catch(e) {
+                    this.gocheClient.cacheManager.cacheCritical++
+                }
                 this.gocheClient.guilds.get(data.d.guild_id).voiceChannels.delete(voiceChannel.id)
                 await this.gocheClient.goche.listenerManager.listeners
                 .filter((eventClass) => eventClass.eventName === `${data.t}`)
                 .map((eventClass) => eventClass.on(voiceChannel))
             break;
             case 0:
- 
+                try {
+                    if (typeof this.gocheClient.guilds.get(data.d.guild_id) === 'object') {
+                        if (typeof guild.category.get(data.d.channel_id) === 'object') {
+                            this.gocheClient.cacheManager.cacheRemoved++
+                            guild.category.delete(data.d.channel_id)
+                        }
+                    }
+                } catch(e) {
+                    this.gocheClient.cacheManager.cacheCritical++
+                }
                 this.gocheClient.guilds.get(data.d.guild_id).category.delete(channel.id)
                 await this.gocheClient.goche.listenerManager.listeners
                 .filter((eventClass) => eventClass.eventName === `${data.t}`)
                 .map((eventClass) => eventClass.on(channel))
             break;
             default:
-
+                try {
+                    if (typeof this.gocheClient.guilds.get(data.d.guild_id) === 'object') {
+                        if (typeof guild.channels.get(data.d.channel_id) === 'object') {
+                            this.gocheClient.cacheManager.cacheRemoved++
+                            guild.channels.delete(data.d.channel_id)
+                        }
+                    }
+                } catch(e) {
+                    this.gocheClient.cacheManager.cacheCritical++
+                }
                 this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
                 await this.gocheClient.goche.listenerManager.listeners
                 .filter((eventClass) => eventClass.eventName === `${data.t}`)
@@ -361,7 +391,9 @@ module.exports = class GocheController {
                             /**
                              * How cool, this to be equal to the result of before
                              */
+                            this.gocheClient.cacheManager.changesRevoked++
                         } else {
+                            this.gocheClient.cacheManager.cacheChanged++
                             channelVoiceUpdate[obj] = voiceChannel[obj]
                         }
                     } else {
@@ -384,10 +416,13 @@ module.exports = class GocheController {
                             /**
                              * How cool, this to be equal to the result of before
                              */
+                            this.gocheClient.cacheManager.changesRevoked++
                         } else {
+                            this.gocheClient.cacheManager.cacheChanged++
                             channelUpdate[obj] = channel[obj]
                         }
                     } else {
+                        
                         /**
                          * Array and Maps cannot be changed. This is only updated when the Discord API sends an update event.
                          */
@@ -406,7 +441,9 @@ module.exports = class GocheController {
                             /**
                              * How cool, this to be equal to the result of before
                              */
+                             this.gocheClient.cacheManager.changesRevoked++
                         } else {
+                            this.gocheClient.cacheManager.cacheChanged++
                             categoryUpdate[obj] = channel[obj]
                         }
                     } else {
@@ -429,6 +466,7 @@ module.exports = class GocheController {
                              * How cool, this to be equal to the result of before
                              */
                         } else {
+                            this.gocheClient.cacheManager.cacheChanged++
                             channelUpdateOther[obj] = channel[obj]
                         }
                     } else {

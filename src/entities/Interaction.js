@@ -19,7 +19,33 @@ module.exports = class Interaction {
         this.channel = this.guild.channels.get(this.channelID)
         this.applicationID = interaction.application_id
         this.application = this.gocheLibrary.client.selfUser
-        this.command = new CommandInteraction(interaction)
+        this.command = new CommandInteraction(interaction.data)
+    }
+
+    /**
+     * Make the bot think
+     * 
+     * @Warn This method creates a request in the Discord API that is received by the INTERACTION_CREATE event that it makes to respond to the interaction.
+     */
+    startThinking(content) {
+        if (typeof content === 'object') {
+            this.gocheLibrary.requestManager.postRequest(`interactions/${this.id}/${this.token}/callback`, function data(res) {
+       
+            }, {
+                type: 4,
+                data: content
+            })
+        } else {
+            this.gocheLibrary.requestManager.postRequest(`interactions/${this.id}/${this.token}/callback`, function data(res) {
+       
+            }, {
+                type: 4,
+                data: {
+                    content: content
+                }
+            })
+        }
+        return this
     }
 
 

@@ -28,20 +28,36 @@ module.exports = class Channel {
         this.name = this.channel.name
         this.topic = this.channel.topic || ''
         this.nsfw = this.channel.nsfw === undefined ? false : this.channel.nsfw
-        this.lastMessageID = this.channel.last_message_id
-        
-    
+        this.lastMessageID = this.channel.last_message_id 
+        this.messagesQueue = new Map()
     }
     /**
      * 
      * @param {*} messageID Mention the message ID
      * @param {*} allowedMentions  A function that allows you to mention or mention a certain user
-     * @returns 
+     * @example
+     * ```
+     * 
+     * channel.messageReference(messageID, {
+     *  parses: ["users", "roles"], 
+     *  users: []
+     * }).sendMessage('Hello')
+     * 
+     * ``` 
      */
     messageReference(messageID, allowedMentions) {
         return new MessageReference(messageID, allowedMentions, this.gocheLibrary, this.guild, this.id)
     }
 
+
+    /**
+     * @description Create a message in the text channel.
+     * @param {*} content 
+     * @example
+     * ```
+     * channel.sendMessage('Hello')
+     * ```
+     */
     async sendMessage(content) {
         let dataMessage = {}
         if (typeof content === 'object') {
