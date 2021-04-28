@@ -30,7 +30,7 @@ module.exports = class GocheLibrary {
         this.requestManager = new httpManager(this)
         this.gocheController = new GocheController(this)
         this.slashManager = new SlashManager(this)
-           this.activities = new Activities()
+        this.activities = new Activities()
                                 .setStatus('online')
 
     }
