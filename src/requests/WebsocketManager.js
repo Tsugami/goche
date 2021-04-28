@@ -49,10 +49,10 @@ module.exports = class WebsocketManager {
                     const sendHeart = async() => {
                         this.lantecy = Date.now()
                
-                        await this.send(JSON.stringify({
+                        await this.send({
                             'op': 1,
                             'd': this.gocheClient.heartbeart.seq
-                        }))
+                        })
                    
                        
                     } 
@@ -97,14 +97,14 @@ module.exports = class WebsocketManager {
     }
 
     setActivities(activities) {
-        this.send(JSON.stringify({
+        this.send({
             op: 3,
             d: {
                 game:  this.gocheClient.goche.activities.presenceWS(),
                 status: this.gocheClient.goche.activities.status,
                 afk: false
             }
-        }))
+        })
        
     }
     
