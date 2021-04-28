@@ -127,14 +127,14 @@ module.exports = class WebsocketManager {
                  * From what I understand when the bot does not receive many events, sometimes it asks to reconnect. 
                  * Otherwise, if there is a connection problem, this option may return.
                  */
-                this.send(JSON.stringify({
+                this.send({
                     op: 6,
                     d: {
                         token: this.gocheClient.token,
                         session_id: this.gocheClient.selfUser.sessionID,
                         seq: this.gocheClient.heartbeart.seq
                     }
-                }))
+                })
             break;
         }
 
