@@ -25,20 +25,11 @@ module.exports = class WebsocketManager {
     }
 
     connect() {
-      
-        this.ws.on('open', (ws) => this.identify())
-
-        this.ws.on('close', (ws, code, reason) => {
             this.ready = false
         })
     
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
-    
-            this.gocheClient.heartbeart.wsReceivedMessage++
-            if (typeof data.s === 'number') {
-                this.gocheClient.heartbeart.seq++
-            }
             switch(data.op) {
                 case 11:
                     this.gocheClient.ping = Date.now() - this.lantecy
