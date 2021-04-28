@@ -5,6 +5,7 @@ const httpManager = require('./requests/httpManager')
 const ShardingController = require('./sharding/ShardingController')
 const GocheController = require('./hooks/GocheController')
 const SlashManager = require('./action/guild/SlashCommand')
+const Activities = require('./action/user/Activities')
 
 
 
