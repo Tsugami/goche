@@ -32,7 +32,6 @@ module.exports = class GocheLibrary {
         this.slashManager = new SlashManager(this)
         this.activities = new Activities()
                                 .setStatus('online')
-        
 
     }
 
