@@ -34,8 +34,7 @@ module.exports = class WebsocketManager {
     
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
-            
-            console.log(data)
+    
             this.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
                 this.gocheClient.heartbeart.seq++
