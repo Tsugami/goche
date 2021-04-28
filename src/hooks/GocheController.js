@@ -49,7 +49,7 @@ module.exports = class GocheController {
                         }
                     break;
                     case 'GUILD_CREATE':
-                     
+                        
                     break;
                     case 'CHANNEL_CREATE': 
                         const channel = new Channel(data.d, this.gocheLibrary)
@@ -66,13 +66,11 @@ module.exports = class GocheController {
                         .map((eventClass) => eventClass.on(channel))
                     break;
                     case 'CHANNEL_UPDATE': 
-                      
                         this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
                         this.gocheClient.guilds.get(data.d.guild_id).channels.set(channel.id, channel)
                         await this.gocheClient.goche.listenerManager.listeners
                         .filter((eventClass) => eventClass.eventName === `${data.t}`)
                         .map((eventClass) => eventClass.on(channel))
-                       
                     break;
                     default:
     
@@ -146,7 +144,7 @@ module.exports = class GocheController {
 
     async guildCreate(data) {
         if (this.data.guilds.filter((guild) => guild.id === data.d.id).length === 0) {
-            const guild = new Guild(data.d)
+            const guild = new Guild(data.d, this.gocheClient)
             for (let channel of data.d.channels) {
                 if (channel.type === 4) {
                     guild.category.set(channel.id, new Channel(channel, guild, this.gocheClient.goche))
@@ -165,9 +163,9 @@ module.exports = class GocheController {
             await this.gocheClient.guilds.set(data.d.id, guild)
             await this.gocheClient.goche.listenerManager.listeners
             .filter((eventClass) => eventClass.eventName === `${data.t}`)
-            .map((eventClass) => eventClass.on(new Guild(data.d)))
+            .map((eventClass) => eventClass.on(new Guild(data.d, this.gocheClient)))
         } else {
-            const guild = new Guild(data.d)
+            const guild = new Guild(data.d, this.gocheClient)
             for (let channel of data.d.channels) {
                 if (channel.type === 4) {
                     guild.category.set(channel.id, new Channel(channel, guild, this.gocheClient.goche))

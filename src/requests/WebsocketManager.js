@@ -6,6 +6,7 @@ const Member = require('../entities/Member')
 const Message = require('../entities/Message')
 const SelfUser = require('../entities/SelfUser')
 const GocheClient = require('../manager/GocheClient')
+const OPIdentify = require('../socket/OPIdentify')
 
 
 
@@ -18,9 +19,6 @@ module.exports = class WebsocketManager {
         this.data = {
             guilds: []
         }
-
-      
-  
         this.heart = null
         this.lantecy = 0
         this.ready = false
@@ -36,7 +34,8 @@ module.exports = class WebsocketManager {
     
         this.ws.on('message', async (message) => {
             let data = JSON.parse(message)
-      
+            
+            console.log(data)
             this.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
                 this.gocheClient.heartbeart.seq++
@@ -47,11 +46,11 @@ module.exports = class WebsocketManager {
                 break;
                 case 10:
                  
-           
+                    
                     const sendHeart = async() => {
                         this.lantecy = Date.now()
                
-                        await this.ws.send(JSON.stringify({
+                        await this.send(JSON.stringify({
                             'op': 1,
                             'd': this.gocheClient.heartbeart.seq
                         }))
@@ -64,9 +63,11 @@ module.exports = class WebsocketManager {
                     }, data.d.heartbeat_interval) 
                     break;
                 case 7:
+                    this.sendListener(data)
                     this.reconnect(7, data, 'It looks like there was a problem with server connection or Discord made a request to reconnect')
                     break;
                 case 9:
+                    this.sendListener(data)
                     this.reconnect(9, data, 'It seems that Discord gave up on this connection because the previous one there was a stabilized connection and in a few seconds I will reconnect')       
                 default:
                     this.gocheClient.goche.gocheController.updateCache(data)
@@ -79,12 +80,25 @@ module.exports = class WebsocketManager {
 
     }
 
+    sendListener(data) {
+        this.gocheClient.goche.listenerManager.listeners
+            .filter((eventClass) => eventClass.eventName === 'GATEWAY_LISTENER')
+            .map((eventClass) => eventClass.on(new OPIdentify(data, false)))
+    }
+    send(data) {
+        this.gocheClient.goche.listenerManager.listeners
+        .filter((eventClass) => eventClass.eventName === 'GATEWAY_LISTENER')
+        .map((eventClass) => eventClass.on(new OPIdentify(data, true)))
+        this.ws.send(JSON.stringify(data))
+        return data
+    }
+
     revokedToken() {
        this.identify()
     }
 
     setActivities(activities) {
-        this.ws.send(JSON.stringify({
+        this.send(JSON.stringify({
             op: 3,
             d: {
                 game:  this.gocheClient.goche.activities.presenceWS(),
@@ -96,22 +110,32 @@ module.exports = class WebsocketManager {
     }
     
     /**
-     * @prop { t: null, s: null, op: 7, d: null }
-     *These types of connections can be used when there is instability in the connection or Discord disconnects because it is not in session!
+     * 
+     * This part is for reconnecting to the Websocket and resuming the session back. **This method was not created to recreate or disconnect, 
+     * to create closure of the websocket.** Only to **resume** the `session`!
      */
-    reconnect(op, message, reason) {
+    async reconnect(op, message, reason) {
         switch(op) {
-            case 9: 
+            case 9:
+                /**
+                 * When you turn it on and off, turn it on again as Discord asks you to return to the previous session that was created. 
+                 * So this function will restore the previous session but it will not recover lost events either.
+                 */
                 this.resuming(message)
             break;
             case 7:
-                if (this.ready === true) {
-                    clearInterval(this.heart) 
-                    this.ws.close(4901)
-                } else {
-                    this.ws.close(1000)
-                }
-               
+                /**
+                 * From what I understand when the bot does not receive many events, sometimes it asks to reconnect. 
+                 * Otherwise, if there is a connection problem, this option may return.
+                 */
+                this.send(JSON.stringify({
+                    op: 6,
+                    d: {
+                        token: this.gocheClient.token,
+                        session_id: this.gocheClient.selfUser.sessionID,
+                        seq: this.gocheClient.heartbeart.seq
+                    }
+                }))
             break;
         }
 
@@ -124,20 +148,12 @@ module.exports = class WebsocketManager {
      * To resume the session
      */
     resuming(message) {
-        if (message.d === true) {
+        if (message.d === false) {
             /**
-             * It is possible that the connection may have dropped and the session is returning back.
+             * When you turn it on and off, turn it on again as Discord asks you to return to the previous session that was created. 
+             * So this function will restore the previous session but it will not recover lost events either.
              */
-            this.ws.send(JSON.stringify({
-                op: 6,
-                d: {
-                    token: this.gocheClient.token,
-                    session_id: this.gocheClient.selfUser.sessionID,
-                    seq: this.gocheClient.heartbeart.seq
-                }
-            }))
-        } else {
-            this.identify()
+             this.identify()
         }
         return this
     }
@@ -147,37 +163,33 @@ module.exports = class WebsocketManager {
     
      async identify() {
         this.ready = true
-
-       
-        await this.ws.send(
-   
-            JSON.stringify({
-                op: 2,
-                d: {
-                    token: this.gocheClient.token,
-                    intents: this.gocheClient.intentManager.intents,
-                    v: 8,
-                    guild_subscriptions: true,
-                    presence: {
-                        game:  this.gocheClient.goche.activities.presenceWS(),
-                        status: this.gocheClient.goche.activities.status,
-                 
-                        afk: false
-                    },
-            
-                    properties: {
-                        os:  process.platform,
-                        browser: 'Goche - https://github.com/NavyCake/Goche',
-                        device: 'Goche - https://github.com/NavyCake/Goche'
-                    }
+     
+        await this.send({
+            op: 2,
+            d: {
+                token: this.gocheClient.token,
+                intents: this.gocheClient.intentManager.intents,
+                v: 8,
+                guild_subscriptions: true,
+                presence: {
+                    game:  this.gocheClient.goche.activities.presenceWS(),
+                    status: this.gocheClient.goche.activities.status,
+             
+                    afk: false
+                },
+        
+                properties: {
+                    os:  process.platform,
+                    browser: 'Goche - https://github.com/NavyCake/Goche',
+                    device: 'Goche - https://github.com/NavyCake/Goche'
                 }
-            })
-        )
+            }
+        })
 
-        await this.ws.send(JSON.stringify({
-            'op': 1,
-            'd': this.gocheClient.heartbeart.seq
-        }))
+        await this.ws.send({
+            op: 1,
+            d: this.gocheClient.heartbeart.seq
+        })
     }
 
 

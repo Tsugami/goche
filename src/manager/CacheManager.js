@@ -1,6 +1,10 @@
 
 
 
+/**
+ * @deprecated
+ * There will be no more implementations until you set up the ShardManager 
+ */
 module.exports = class CacheManager {
     constructor() {
         this.changesObject = 0

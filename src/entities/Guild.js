@@ -1,7 +1,9 @@
+const AddBanAction = require("../action/guild/AddBanAction")
+const Member = require("./Member")
 
 
 module.exports = class Guild {
-    constructor(guild) {
+    constructor(guild, gocheClient) {
         this.id = guild.id || ''
         this.name = guild.name || ''
         this.description = guild.description || ''
@@ -29,6 +31,7 @@ module.exports = class Guild {
         this.presences = guild.presences
         this.maxMembers = guild.max_members
         this.vanityURL = guild.vanity_url_code || ''
+        this.gocheClient = gocheClient
         this.banner = guild.banner || ''
         this.premiumTier = guild.premium_tier
         this.premiumSubscriptionCount = guild.premium_subscription_count
@@ -39,93 +42,28 @@ module.exports = class Guild {
     }
 
 
-    ban(member, options = {}) {
-        
-    }
-
-
-    getUserByID(id) {
-        return this.members.get(id)
-    }
-
-    getUserByTAG(tag) {
-        if (Object.values(this.members).filter((e) => e.user.tag === tag).length === 0) {
-            return null
+    ban(member, delDays) {
+        if (member instanceof Member) {
+            return new AddBanAction(this, member.user, delDays)
         } else {
-            return Object.values(this.members).filter((e) => e.user.tag === tag)[0]
-        } 
-    }
-
-    getUsersByDiscriminator(discriminator) {
-        if (Object.values(this.members).filter((e) => e.user.discriminator === discriminator).length === 0) {
-            return []
-        } else {
-            return Object.values(this.members).filter((e) => e.user.discriminator === discriminator)
+            if (typeof member === 'undefined' && member === null) {
+                Error("Member return is null")
+                return
+            }
+            return new AddBanAction(this.getUserByID(member), member.user, delDays)
         }
     }
 
-    getUserByUsername(username) {
-        if (Object.values(this.members).filter((e) => e.user.username === username).length === 0) {
-            return []
+    kick(member) {
+        if (member instanceof Member) {
+            return new AddBanAction(this, member.user, delDays, this.gocheClient)
         } else {
-            return Object.values(this.members).filter((e) => e.user.username === username)
+            if (typeof member === 'undefined' && member === null) {
+                Error("Member return is null")
+                return
+            }
+            return new AddBanAction(this.getUserByID(member), member.user, delDays, this.gocheClient)
         }
     }
-
-
-    getChannelByID(id) {
-        return this.channels.get(id)
-    }
-
-    getChannelByTAG(tag) {
-        if (Object.values(this.channels).filter((e) => e.user.tag === tag).length === 0) {
-            return null
-        } else {
-            return Object.values(this.channels).filter((e) => e.user.tag === tag)[0]
-        } 
-    }
-
-    getChannelsByName(name) {
-        if (Object.values(this.channels).filter((e) => e.name === name).length === 0) {
-            return []
-        } else {
-            return Object.values(this.channels).filter((e) => e.name === name)[0]
-        }
-    }
-
-    getChannelsByID(id) {
-        if (Object.values(this.channels).filter((e) => e.id === id).length === 0) {
-            return []
-        } else {
-            return Object.values(this.channels).filter((e) => e.id === id)[0]
-        }
-    }
-
-    getChannelsByTopic(topic) {
-        if (Object.values(this.members).filter((e) => e.topic === topic).length === 0) {
-            return []
-        } else {
-            return Object.values(this.members).filter((e) => e.topic === topic)
-        }
-    }
-
-
-    getVoiceByName(name) {
-        if (Object.values(this.voiceChannels).filter((e) => e.name === name).length === 0) {
-            return []
-        } else {
-            return Object.values(this.voiceChannels).filter((e) => e.name === name)[0]
-        }
-    }
-
-    getVoiceByID(id) {
-        if (Object.values(this.voiceChannels).filter((e) => e.id === id).length === 0) {
-            return []
-        } else {
-            return Object.values(this.voiceChannels).filter((e) => e.id === id)
-        }
-    }
-
-  
     
 }
