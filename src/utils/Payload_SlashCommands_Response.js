@@ -29,36 +29,5 @@ module.exports = {
             parse: '',
             users: ''
         },
-        embed: {
-            title: '',
-            description: '',
-            url: '',
-            image: {
-                url: '',
-                icon_url: '',
-                proxy_icon_url: ''
-            },
-            author: {
-                name: '',
-                url: '',
-                icon_url: '',
-                proxy_icon_url: ''
-            },
-            timestamp: 0,
-            color: 0,
-            fields: [
-                {
-                    name: '',
-                    value: ''
-                }
-            ],
-
-            footer: {
-                text: '',
-                icon_url: '',
-                proxy_icon_url: '',
-
-            }
-        }
     }
 }

@@ -1,8 +1,9 @@
-
+const AddBanAction = require("../action/guild/AddBanAction")
+const Member = require("./Member")
 
 
 module.exports = class Guild {
-    constructor(guild) {
+    constructor(guild, gocheClient) {
         this.id = guild.id || ''
         this.name = guild.name || ''
         this.description = guild.description || ''
@@ -30,6 +31,7 @@ module.exports = class Guild {
         this.presences = guild.presences
         this.maxMembers = guild.max_members
         this.vanityURL = guild.vanity_url_code || ''
+        this.gocheClient = gocheClient
         this.banner = guild.banner || ''
         this.premiumTier = guild.premium_tier
         this.premiumSubscriptionCount = guild.premium_subscription_count
@@ -38,4 +40,30 @@ module.exports = class Guild {
         this.maxVideoChannelUsers = guild.max_video_channel_users
         this.welcomeScreen = ''
     }
+
+
+    ban(member, delDays) {
+        if (member instanceof Member) {
+            return new AddBanAction(this, member.user, delDays)
+        } else {
+            if (typeof member === 'undefined' && member === null) {
+                Error("Member return is null")
+                return
+            }
+            return new AddBanAction(this.getUserByID(member), member.user, delDays)
+        }
+    }
+
+    kick(member) {
+        if (member instanceof Member) {
+            return new AddBanAction(this, member.user, delDays, this.gocheClient)
+        } else {
+            if (typeof member === 'undefined' && member === null) {
+                Error("Member return is null")
+                return
+            }
+            return new AddBanAction(this.getUserByID(member), member.user, delDays, this.gocheClient)
+        }
+    }
+    
 }
