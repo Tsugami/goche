@@ -1,0 +1,23 @@
+{
+  "name": "goche",
+  "version": "0.0.1",
+  "description": "A library made in Javascript using Discord API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NavyCake/Goche.git"
+  },
+  "author": "NavyCake",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/NavyCake/Goche/issues"
+  },
+  "homepage": "https://github.com/NavyCake/Goche#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "ws": "^7.4.4"
+  }
+}
