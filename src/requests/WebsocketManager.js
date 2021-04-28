@@ -185,7 +185,7 @@ module.exports = class WebsocketManager {
             }
         })
 
-        await this.ws.send({
+        await this.send({
             op: 1,
             d: this.gocheClient.heartbeart.seq
         })
