@@ -26,9 +26,9 @@ module.exports = class GocheClient {
         this.wsManager = new WebsocketManager(this)
         this.intentManager = new IntentsManager()
         this.cacheManager = new CacheManager()
+        this.shard = 1
         this.selfUser = null
         this.uptime = 0
-        this.ping = 0
         
     }
 }

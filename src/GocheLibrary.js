@@ -2,7 +2,6 @@ const GocheListener = require('./events/listeners/GocheListener')
 const GocheListenerAdapter = require('./events/GocheListenerAdapter')
 const GocheClient = require('./manager/GocheClient')
 const httpManager = require('./requests/httpManager')
-const ShardingController = require('./sharding/ShardingController')
 const GocheController = require('./hooks/GocheController')
 const SlashManager = require('./action/guild/SlashCommand')
 const Activities = require('./action/user/Activities')
@@ -25,7 +24,6 @@ module.exports = class GocheLibrary {
         })
         this.httpManager = new httpManager(this)
         this.client = new GocheClient(this.mode, this)
-        this.shardController = new ShardingController(this)
         this.listenerManager = new GocheListenerAdapter(this)
         this.requestManager = new httpManager(this)
         this.gocheController = new GocheController(this)
@@ -56,8 +54,20 @@ module.exports = class GocheLibrary {
      *                  .addListener(new Ready())
      * ```
      */
-    createProfile() {
+    createProfile(mode, shardMax) {
         this.mode = 'profile'
+        if (mode === 'sharding') {
+            if (typeof shardMax === 'number') {
+                this.client.shard = shardMax
+                this.client.wsManager.connect()
+                return 
+            } else {
+                this.client.shard = 1
+                this.client.wsManager.connect()
+            }
+            
+        }
+  
         this.client.wsManager.connect()
         
         return this;

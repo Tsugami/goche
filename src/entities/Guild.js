@@ -3,7 +3,7 @@ const Member = require("./Member")
 
 
 module.exports = class Guild {
-    constructor(guild, gocheClient) {
+    constructor(guild, gocheClient, shard = 0) {
         this.id = guild.id || ''
         this.name = guild.name || ''
         this.description = guild.description || ''
@@ -22,6 +22,7 @@ module.exports = class Guild {
         this.unavailable = guild.unavailable
         this.membersCount = guild.member_count
         this.voiceStates = guild.voice_states
+        this.shardID = shard
         this.roles = new Map()
         this.emojis = new Map()
         this.members = new Map()

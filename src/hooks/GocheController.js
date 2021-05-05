@@ -17,7 +17,7 @@ module.exports = class GocheController {
         this.gocheClient = gocheLibrary.client
     }
 
-    async updateCache(data = Payload) {
+    async updateCache(data = Payload, shard = 0) {
         switch (this.gocheLibrary.mode) {
             case 'light':
                 
@@ -142,7 +142,7 @@ module.exports = class GocheController {
     }
 
 
-    async guildCreate(data) {
+    async guildCreate(data, shard) {
         if (this.data.guilds.filter((guild) => guild.id === data.d.id).length === 0) {
             const guild = new Guild(data.d, this.gocheClient)
             for (let channel of data.d.channels) {

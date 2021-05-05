@@ -1,4 +1,5 @@
 const { default: axios } = require('axios')
+const GocheInfo = require('../GocheInfo')
 
 module.exports = class httpManager {
     constructor(gocheLibrary) {
@@ -9,7 +10,7 @@ module.exports = class httpManager {
 
         switch(method) {
             case 'delete':
-            return axios.delete(`https://discord.com/api/v8/${path}`, {
+            return axios.delete(`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`, {
                 method: method,
                 headers: {
                     Authorization: `Bot ${this.gocheLibrary.token}`,
@@ -33,7 +34,7 @@ module.exports = class httpManager {
             break;
             case 'patch':
              
-                return axios.patch(`https://discord.com/api/v8/${path}`,  data, {
+                return axios.patch(`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`,  data, {
                     headers: {
                         Authorization: `Bot ${this.gocheLibrary.token}`,
                         'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
@@ -56,7 +57,7 @@ module.exports = class httpManager {
                 .catch(error => response(error))
                 break;
                 default: 
-                return axios[method](`https://discord.com/api/v8/${path}`, {
+                return axios[method](`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`, {
                     method: method,
                     headers: {
                         Authorization: `Bot ${this.gocheLibrary.token}`,
@@ -83,7 +84,7 @@ module.exports = class httpManager {
     }
     async postRequest(path, response, data) {
     
-        return axios.post(`https://discord.com/api/v8/${path}`, data, {
+        return axios.post(`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`, data, {
             headers: {
                 Authorization: `Bot ${this.gocheLibrary.token}`,
                 'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
@@ -103,7 +104,7 @@ module.exports = class httpManager {
         
     }
     async getRequest(path, response, data) {
-        return axios.get(`https://discord.com/api/v8/${path}`, {
+        return axios.get(`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`, {
             headers: {
                 Authorization: `Bot ${this.gocheLibrary.token}`,
                 'User-Agent': 'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',

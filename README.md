@@ -34,7 +34,7 @@ const GocheLibrary = require('GocheLibrary');
 const goche = new GocheLibrary('token')
                      .createProfile()
                      .setIntents([
-                        
+                        'guilds'
                      ])
                      .ignoreCache([
                         'messageGuild'
