@@ -14,7 +14,6 @@ module.exports = class WebsocketManager {
          * You can manage the Websocket Connection that you will get within the class
          */
         this.connectionList = new Map()
-        this.wsMaster = new WebSocket(`wss://gateway.discord.gg/?v=${GocheInfo.DISCORD_REST}&encoding=json`)
         
     }
     
