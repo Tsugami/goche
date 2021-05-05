@@ -1,4 +1,3 @@
-
 module.exports = class MethodAction {
     constructor() {
         this.data = {}

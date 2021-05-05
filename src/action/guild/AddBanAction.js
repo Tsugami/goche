@@ -15,7 +15,7 @@ module.exports = class AddBanAction {
      * 
      * @param {*} reason 
      * @example
-     * guild.ban('Member or ID, tag', 7).reason('Testing')
+     * guild.ban('Member or ID, tag', 7).reason('Testing').done()
      */
     reason(reason) {
         this.reason = reason
@@ -27,7 +27,7 @@ module.exports = class AddBanAction {
      * The class will create a request in the Discord API to punish server users.
      */
     done() {
-        this.guild
+        
     }
 
 
