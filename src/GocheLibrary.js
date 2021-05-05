@@ -60,10 +60,11 @@ module.exports = class GocheLibrary {
             if (typeof shardMax === 'number') {
                 this.client.shard = shardMax
                 this.client.wsManager.connect()
-                return 
+                return this 
             } else {
                 this.client.shard = 1
                 this.client.wsManager.connect()
+                return this
             }
             
         }
