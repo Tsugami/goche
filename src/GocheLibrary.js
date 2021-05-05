@@ -110,7 +110,10 @@ module.exports = class GocheLibrary {
     setIntents(intents = ['']) { 
         if (typeof intents === 'object') {
             for (let intent of intents) {
-                this.client.intentManager.add(intent)
+                if (typeof intent === 'string') {
+                    this.client.intentManager.add(intent)
+                }
+                
             }
         }
         return this
@@ -120,16 +123,72 @@ module.exports = class GocheLibrary {
      * @param {*} caches 
      * @returns GocheLibrary
      * @description You can `limit` Goche to some events that are `received` by the `Websocket`. 
-     * Remembering some methods may not work because certain events may `NOT WORK`.
      * @example
      *  ```
      * const goche = new GocheLibrary()
-     *                  .ignoreCache(['ready', 'updateGuild'])
+     *                  .ignoreCache(['guildCreate'])
      * ```
+     * 
+     *   * @example
+     * [
+     *       'applicationCommandCreate',
+     *       'applicationCommandUpdate',
+     *       'applicationCommandDelete',
+     *       'channelCreate',
+     *       'channelCreate',
+     *       'channelCreate',
+     *       'channelPinsUpdate',
+     *       'threadCreate',
+     *       'threadUpdate',
+     *       'threadDelete',
+     *       'threadListSync',
+     *       'threadMemberUpdate',
+     *       'threadMembersUpdate',
+     *       'guildCreate',
+     *       'guildUpdate',
+     *       'guildDelete',
+     *       'guildBanAdd',
+     *       'guildBanRemove',
+     *       'guildEmojisUpdate',
+     *       'guildMemberAdd',
+     *       'guildMemberUpdate',
+     *       'guildMembersChunk',
+     *       'guildRoleCreate',
+     *       'guildRoleUpdate',
+     *       'guildRoleDelete',
+     *       'guildRoleDelete',
+     *       'integratonCreate',
+     *       'integratonUpdate',
+     *       'integratonDelete',
+     *       'interactionUpdate',
+     *       'interactionCreate',
+     *       'interactionDelete',
+     *       'inviteCreate',
+     *       'inviteDelete',
+     *       'messageCreate',
+     *       'messageDelete',
+     *       'messageUpdate',
+     *       'messageDeleteBulk',
+     *       'messageReactionAdd',
+     *       'messageReactionUpdate',
+     *       'messageReactionDelete',
+     *       'messageReactionDeleteAll',
+     *       'messageReactionDeleteEmoji',
+     *       'presenceUpdate',
+     *       'typingStart',
+     *       'userUpdate',
+     *       'voiceStateUpdate',
+     *       'voiceServerUpdate',
+     *       'webhooksUpdate'
+     * ]
      */
-     ignoreCache(caches = []) {
+     ignoreCache(caches = ['']) {
         if (typeof caches === 'object') {
-      
+            for (let cache of caches) {
+                if (typeof cache === 'string') {
+                    this.client.ignoreCacheManager.add(cache)
+                }
+            }
         }
         return this
     }

@@ -38,7 +38,15 @@ module.exports = class ConnectionManager {
         this.ws.on('message', async (message) => {
         
             let data = JSON.parse(message)
-            data.shard = this.shardID
+            if (typeof data.t === 'string') {
+                if (typeof data.d === 'object') {
+                    data.d.shard = this.shardID
+                }
+                if (this.websocketManager.gocheClient.ignoreCacheManager.get(data.t) === true) {
+                    return
+                }
+            }
+
             this.websocketManager.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
                 this.seq++

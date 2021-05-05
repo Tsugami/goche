@@ -3,6 +3,7 @@ const GocheLibrary = require('../GocheLibrary')
 const Heartbeart = require('../internal/Heartbeart')
 const WebsocketManager = require('../requests/WebsocketManager')
 const CacheManager = require('./CacheManager')
+const IgnoreCacheManager = require('./IgnoreCacheManager')
 const IntentsManager = require('./IntentsManager')
 
 
@@ -26,6 +27,7 @@ module.exports = class GocheClient {
         this.wsManager = new WebsocketManager(this)
         this.intentManager = new IntentsManager()
         this.cacheManager = new CacheManager()
+        this.ignoreCacheManager = new IgnoreCacheManager()
         this.shard = 1
         this.selfUser = null
         this.uptime = 0
