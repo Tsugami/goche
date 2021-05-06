@@ -48,6 +48,43 @@ const goche = new GocheLibrary('token')
 Ready was simple without having to add method to connect Discord API.
 
 
+## Sharding
+You can start shards by adding arguments in the profile ... How to do this? You must have that question in your head, right? Follow this example.
+```js
+const goche = new GocheLibrary('token')
+                     .createProfile('sharding', 5)
+                     .setIntents([
+                        'guilds'
+                     ])
+                     .ignoreCache([
+                        'messageGuild'
+                     ])
+```
+
+There mentioned `sharding` is the mode that is starting within the profile and on the other side that is number is the number of shards. Bearing in mind that the Gaucho creates several websocket connections, a certain limit may take longer to connect. Goche has limitations when it comes to connecting to a websocket.
+
+
+## Connection Listener
+I am creating this part to clarify the use of the ConnectionListener which is less of a Sharding base but a Websocket map saved in Array that you can manage in each position of the Websocket. The first class that commands is the `WebsocketManager` and that creates Shards connection in `ConnectionListener`
+
+
+## Configuration of Requests
+Goche has a function that you can control request usage ie ... You can configure it inside the library without having to enter such a directory to modify a certain thing. Interesting isn't it, right? Let's follow this example is very simple, you can select the methods.
+```js
+const goche = new GocheLibrary('token')
+                     .setConfigRequestBuilder(
+                        new RequestControlAction()
+                                          .setQueue(5) // Default is 5
+                                          .setTime(1 * 1000) // This will release the requests that are stuck in the famous error 429
+                                          .setIgnoreRequest() // You want this function to ignore those flooding requests
+                                          .setIgnorePath(['guilds']) // Particularly this function is in beta, I'm not sure if this will work without 100%
+                     )
+```
+
+It was easy, right? This will facilitate and control the use of requests without having to extend or pull the RateLimit class to find out how many are in the queue to be done, as there is a function that can work for that.
+
+
+
 #### Library Menu
 There are links in this list that you will be directed to a `README.md` that you have in each library directory.
 
