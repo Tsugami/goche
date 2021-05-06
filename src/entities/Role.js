@@ -1,3 +1,4 @@
+const Color = require("../tools/Color")
 const Guild = require("./Guild")
 
 
@@ -10,7 +11,7 @@ module.exports = class Role {
         this.isMentionable = role.mentionable
         this.managed = role.managed
         this.hoist = role.hoist
-        this.color = role.color
+        this.color = new Color().ToNumber(role.color)
         this.guild = guild
     }
 }
