@@ -9,7 +9,7 @@ module.exports = class RoleManagerAction {
         this.gocheClient = gocheClient
         this.guild = guild
     }
-
+    
     async addRole(memberID, roleID) {
         let dataRole = null
         if (typeof memberID === 'string') {

@@ -24,7 +24,7 @@ module.exports = class AddBanAction {
         if (typeof reason === 'string') {
             this.reason = reason
         } else {
-            Error('You need to put a string for argument')
+            throw Error('You need to put a string for argument')
         }
         return this
     }
@@ -34,7 +34,7 @@ module.exports = class AddBanAction {
      */
     async done() {
         if (this.user === null) {
-            return Error('You need to inform User to ban.')
+            throw Error('You need to inform User to ban.')
         }
         const classBan = class BanInfo {
             constructor(data) {

@@ -81,7 +81,7 @@ module.exports = class Guild {
             })
             return
         } else { 
-            Error('Set the Argument to String (fetchUserBan[Guild])')
+            throw Error('Set the Argument to String (fetchUserBan[Guild])')
         }
         return []
     }
@@ -103,7 +103,7 @@ module.exports = class Guild {
             })
             return banInf
         } else { 
-            Error('Set the Argument to String (fetchUserBan[Guild])')
+            throw Error('Set the Argument to String (fetchUserBan[Guild])')
         }
         return {
             type: 'http/unknown',
@@ -147,7 +147,7 @@ module.exports = class Guild {
            
             return dataBan
         } else {
-            Error('Set the Argument to String (removeBan[Guild])')
+            throw Error('Set the Argument to String (removeBan[Guild])')
         }
         return {
             type: 'http/unknown',
@@ -226,7 +226,7 @@ module.exports = class Guild {
                 return new MemberGuildAction(this.gocheClient, this, member)
             } 
         } else {
-            Error('Set the Argument to String (modifyMember[Guild])')
+            throw Error('Set the Argument to String (modifyMember[Guild])')
         }
     }
     

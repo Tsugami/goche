@@ -18,7 +18,7 @@ module.exports = class RoleCreateAction {
         if (typeof name === 'string') {
             this.data.name = name
         } else {
-            Error('You need to insert a String in the Argument (setName[RoleCreateAction])')
+            throw Error('You need to insert a String in the Argument (setName[RoleCreateAction])')
         }
         return this
     }
@@ -27,7 +27,7 @@ module.exports = class RoleCreateAction {
         if (typeof permissions === 'number') {
             this.data.permissions = permissions
         } else {
-            Error('You need to insert a Bit (Number) in the Argument (setPermissions[RoleCreateAction])')
+            throw Error('You need to insert a Bit (Number) in the Argument (setPermissions[RoleCreateAction])')
         }
         return this
     }
@@ -35,7 +35,7 @@ module.exports = class RoleCreateAction {
     setColor(color = 0) {
         const conversion = new Color().ToNumber(color)
         if (conversion.error === 'true') {
-            Error('There was a problem making a cover')
+            throw Error('There was a problem making a cover')
         } else {
             this.data.color = conversion.color
         }
@@ -46,7 +46,7 @@ module.exports = class RoleCreateAction {
         if (typeof hoist === 'boolean') {
             this.data.hoist = hoist
         } else {
-            Error('You need to insert a Boolean in the Argument (setHoist[RoleCreateAction])')
+            throw Error('You need to insert a Boolean in the Argument (setHoist[RoleCreateAction])')
         }
         return this
     }
@@ -55,7 +55,7 @@ module.exports = class RoleCreateAction {
         if (typeof mentionable === 'boolean') {
             this.data.mentionable = mentionable
         } else {
-            Error('You need to insert a Boolean in the Argument (setMentionable[RoleCreateAction])')
+            throw Error('You need to insert a Boolean in the Argument (setMentionable[RoleCreateAction])')
         }
         return this
     }
