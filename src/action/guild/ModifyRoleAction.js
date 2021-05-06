@@ -1,14 +1,12 @@
-const Guild = require("../../entities/Guild")
 const Role = require("../../entities/Role")
-const GocheClient = require("../../manager/GocheClient")
-const Color = require("../../tools/Color")
 
 
 
-module.exports = class RoleCreateAction {
-    constructor(gocheClient = new GocheClient(), guild = new Guild()) {
+module.exports = class ModifyRoleAction {
+    constructor(gocheClient = new GocheClient(), guild = new Guild(), role = new Role()) {
         this.gocheClient = gocheClient
         this.guild = guild
+        this.role = role
         this.data = {
 
         }
@@ -68,19 +66,7 @@ module.exports = class RoleCreateAction {
 
     async done() {
         let dataRole
-        let yes;
-        if (typeof this.data.name === 'string') {
-            yes = true
-        } else {
-            return {
-                type: 'roleCreateAction/name',
-                error: true,
-                errorInfo: {
-                    message: 'Enter a name for this role to create it (done[RoleCreateAction])'
-                }
-            }
-        }
-        await this.gocheClient.goche.requestManager.postRequest(`guilds/${this.guild.id}/roles`, async (data) => {
+        await this.gocheClient.goche.requestManager.postRequest(`guilds/${this.guild.id}/roles/${this.role.id}`, async (data) => {
             if (data.error === true) {
                 dataRole = data
             } else {

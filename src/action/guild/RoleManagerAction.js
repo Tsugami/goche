@@ -100,7 +100,100 @@ module.exports = class RoleManagerAction {
     }
 
 
-    async createRole(name) {
+    async createRole() {
         return new RoleCreateAction(this.gocheClient, this.guild)   
     }
+
+    async deleteRole(id) {
+        let dataRole
+        if (typeof id === 'string') {
+            const getRole = this.guild.roles.get(id)
+            if (typeof getRole === 'object') {
+                await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.guild.id}/roles/${role.id}`, (data) => {
+                    if (data.error === true) {
+                        dataRole = data
+                    } else {
+                        dataRole = getRole
+                    } 
+                }, this.data)
+                return dataRole
+            } else {
+                return {
+                    type: 'role/unknown',
+                    error: true,
+                    errorInfo: {
+                        message: 'This role does not exist or has not been registered in the cache.'
+                    }
+                }
+            }
+        } else {
+            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+        }
+    }
+
+
+
+    setPositionRole(id, newPosition) {
+        let dataRole
+        if (typeof id === 'string') {
+            const getRole = this.guild.roles.get(id)
+            if (typeof getRole === 'object') {
+                await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles/`, (data) => {
+                    if (data.error === true) {
+                        dataRole = data
+                    } else {
+                        dataRole = getRole
+                    } 
+                }, {
+                    id: getRole.id,
+                    position: newPosition
+                })
+                return dataRole
+            } else {
+                return {
+                    type: 'role/unknown',
+                    error: true,
+                    errorInfo: {
+                        message: 'This role does not exist or has not been registered in the cache.'
+                    }
+                }
+            }
+        } else {
+            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+        }
+    }
+
+
+    modifyRole(id) {
+        let dataRole
+        if (typeof id === 'string') {
+            const getRole = this.guild.roles.get(id)
+            if (typeof getRole === 'object') {
+                await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles/`, (data) => {
+                    if (data.error === true) {
+                        dataRole = data
+                    } else {
+                        dataRole = getRole
+                    } 
+                }, {
+                    id: getRole.id,
+                    position: newPosition
+                })
+                return dataRole
+            } else {
+                return {
+                    type: 'role/unknown',
+                    error: true,
+                    errorInfo: {
+                        message: 'This role does not exist or has not been registered in the cache.'
+                    }
+                }
+            }
+        } else {
+            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+        }
+    }
+
+
+    
 }

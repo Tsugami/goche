@@ -15,13 +15,17 @@ module.exports = class MemberGuildAction {
     }
 
     setNick(nickname) {
+        if (roles.length >= 0) {
+            Error('You need put nickname for that user (setNick[MemberGuildAction])')
+            return this
+        } 
         this.data.nick = nickname
         return this
     }
 
-    setRoles(roles = []) {
+    setRoles(...roles) {
         if (roles.length >= 0) {
-            Error('There are no roles in the Array')
+            Error('There are no roles in the Array (setRoles[MemberGuildAction])')
             return this
         } 
         if (typeof roles === 'object') {
@@ -31,7 +35,7 @@ module.exports = class MemberGuildAction {
                }
            } 
         } else {
-            Error('You need to mention roles within the Array')
+            Error('You need to mention roles within the Array (setRoles[MemberGuildAction])')
             return this
         }
         return this
@@ -41,7 +45,7 @@ module.exports = class MemberGuildAction {
         if (typeof mute === 'boolean') {
             this.data.mute = mute
         } else {
-            Error('Argument has to be Boolean.')
+            Error('Argument has to be Boolean. (setMute[MemberGuildAction])')
         }
         return this
     }
@@ -50,7 +54,7 @@ module.exports = class MemberGuildAction {
         if (typeof mute === 'boolean') {
             this.data.deaf = deaf
         } else {
-            Error('Argument has to be Boolean.')
+            Error('Argument has to be Boolean. (setDeaf[MemberGuildAction])')
         }
         return this
     }
@@ -59,7 +63,7 @@ module.exports = class MemberGuildAction {
         if (typeof channelID === 'string') {
             this.data.channelID = channelID
         } else {
-            Error('Set the Argument to String.')
+            Error('Set the Argument to String. (moveChannel[MemberGuildAction])')
         }
     }
     
@@ -75,7 +79,7 @@ module.exports = class MemberGuildAction {
             type: 'http/slow',
             error: true,
             errorInfo: {
-                message: 'Probably the request was not made'
+                message: 'Probably the request was not made (done[MemberGuildAction])'
             }
         }
     }

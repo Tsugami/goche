@@ -6,8 +6,18 @@ module.exports = class Color {
     }
 
 
-    ToNumber(hex = 'ffff') {
-
+    ToNumber(...args) {
+        let hex
+        if (args.length >= 3) {
+            hex = [
+                args[0],
+                args[1],
+                args[2]
+            ]
+        } else {
+            hex = args[0]
+        }
+        
         switch(typeof hex) {
             case 'object':
                 try {

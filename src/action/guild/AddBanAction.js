@@ -21,7 +21,11 @@ module.exports = class AddBanAction {
      * guild.ban('Member or ID, tag', 7).reason('Testing').done()
      */
     setReason(reason) {
-        this.reason = reason
+        if (typeof reason === 'string') {
+            this.reason = reason
+        } else {
+            Error('You need to put a string for argument')
+        }
         return this
     }
 
