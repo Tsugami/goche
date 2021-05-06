@@ -1,6 +1,7 @@
 const Guild = require("../../entities/Guild")
 const Role = require("../../entities/Role")
 const GocheClient = require("../../manager/GocheClient")
+const Color = require("../../tools/Color")
 
 
 
@@ -33,7 +34,14 @@ module.exports = class RoleCreateAction {
 
     setColor(color = 0) {
         if (typeof color === 'number') {
-            this.data.color = color
+            console.log(typeof color)
+            const conversion = new Color().ToNumber(color)
+            if (conversion.error === 'true') {
+                Error('There was a problem making a cover')
+            } else {
+                this.data.color = conversion.color
+            }
+           
         } else {
             Error('You need to insert a Number in the Argument (setColor[RoleCreateAction])')
         }
