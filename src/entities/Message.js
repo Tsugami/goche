@@ -1,4 +1,5 @@
 const MessageQueue = require('../action/message/MessageQueue')
+const Guild = require('./Guild')
 const Interaction = require('./Interaction')
 const User = require('./User')
 
@@ -14,7 +15,7 @@ const type = {
 }
 
 module.exports = class Message {
-    constructor(message, guild, gocheLibrary = new GocheLibrary()) {
+    constructor(message, guild = new Guild(), gocheLibrary = new GocheLibrary()) {
   
         this.gocheLibrary = gocheLibrary
         this.guild = guild

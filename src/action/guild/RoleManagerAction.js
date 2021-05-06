@@ -9,18 +9,26 @@ module.exports = class RoleManagerAction {
     }
 
     async addRole(memberID, roleID) {
+        let dataRole = null
         if (typeof memberID === 'string') {
             if (typeof roleID === 'string') {
                 const member = this.guild.members.get(memberID)
                 if (typeof member === 'object') {
                     const role = this.guild.roles.get(roleID)
+            
                     if (typeof role === 'object') {
+                        
                         await this.gocheClient.goche.requestManager.otherRequest('put', `guilds/${this.guild.id}/members/${member.user.id}/roles/${role.id}`, (data) => {
                             if (data.error === true) {
-                                return data
+                                dataRole = data
+                            } else {
+                                dataRole = member
+                                member.roles.set(role.id, role)
                             }
-                            return member
-                        }, this.data)
+                        
+                        return dataRole
+                        }, {    })
+                        return dataRole
                     } else {
                         return {
                             type: 'unknown/role',
@@ -49,6 +57,7 @@ module.exports = class RoleManagerAction {
 
 
     async removeRole(memberID, roleID) {
+        let dataRole = null
         if (typeof memberID === 'string') {
             if (typeof roleID === 'string') {
                 const member = this.guild.members.get(memberID)
@@ -57,10 +66,12 @@ module.exports = class RoleManagerAction {
                     if (typeof role === 'object') {
                         await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.guild.id}/members/${member.user.id}/roles/${role.id}`, (data) => {
                             if (data.error === true) {
-                                return data
+                                dataRole = data
                             }
-                            return member
+                            dataRole = member
+                            member.roles.delete(role.id)
                         }, this.data)
+                        return dataRole
                     } else {
                         return {
                             type: 'unknown/role',

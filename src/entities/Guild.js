@@ -79,6 +79,7 @@ module.exports = class Guild {
                 }
                 return arrayBan
             })
+            return
         } else { 
             Error('Set the Argument to String (fetchUserBan[Guild])')
         }
@@ -88,13 +89,19 @@ module.exports = class Guild {
 
     async fetchUserBan(id) {
         if (typeof id === 'string') {
+            let banInf
             await this.gocheClient.goche.requestManager.getRequest(`guilds/${this.id}/bans/${id}`, (data) => {
+          
                 if (data.error === true) {
-                    return data
+                    banInf = data
+                } else {
+                    const arrayBan = []
+                    banInf = new BanInfo(data)
+                    return new BanInfo(data)
                 }
-                const arrayBan = []
-                return new BanInfo(dataBan)
+           
             })
+            return banInf
         } else { 
             Error('Set the Argument to String (fetchUserBan[Guild])')
         }
@@ -118,13 +125,27 @@ module.exports = class Guild {
     }
 
     async removeBan(member) {
+        let dataBan = null
         if (typeof member === 'string') {
-            await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.id}/bans/${id}`, (data) => {
-                if (data.error === true) {
-                    return data
-                }
-                return new BanInfo(dataBan)
+            await this.fetchUserBan(member).then(async e => {
+           
+                if (e.error === true) {
+                    dataBan = e
+                    
+                } else {
+                    dataBan = e
+                    await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.id}/bans/${member}`, async (data) => {
+
+                        if (data.error === true) {
+                            dataBan = data
+                        }
+                    }, {})
+                }    
+               
+                return dataBan
             })
+           
+            return dataBan
         } else {
             Error('Set the Argument to String (removeBan[Guild])')
         }
@@ -147,6 +168,7 @@ module.exports = class Guild {
                     }
                     return member 
                 })
+                return
             } else {
                 return {
                     type: 'unknown/member',

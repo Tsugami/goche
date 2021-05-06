@@ -10,6 +10,7 @@ const VoiceChannel = require('../entities/VoiceChannel')
 const VoiceState = require('../entities/VoiceState')
 const MemberState = require('../entities/MemberState')
 const Interaction = require('../entities/Interaction')
+const Role = require('../entities/Role')
 
 module.exports = class GocheController { 
     constructor(gocheLibrary = new GocheLibrary()) {
@@ -121,6 +122,11 @@ module.exports = class GocheController {
                 guild.members.set(member.user.id, new Member(member))
             }
            
+
+            for (let role of data.d.roles) {
+                guild.roles.set(role.id, new Role(role, guild))
+            }
+           
             await this.gocheClient.guilds.set(data.d.id, guild)
             await this.gocheClient.goche.listenerManager.listeners
             .filter((eventClass) => eventClass.eventName === `${data.t}`)
@@ -141,6 +147,12 @@ module.exports = class GocheController {
             for (let member of data.d.members) {  
                 guild.members.set(member.user.id, new Member(member))
             }
+
+            for (let role of data.d.roles) {
+                guild.roles.set(role.id, new Role(role, guild))
+            }
+           
+
             this.gocheClient.guilds.set(data.d.id, guild)
         }
     }

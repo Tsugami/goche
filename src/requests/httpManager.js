@@ -38,7 +38,7 @@ module.exports = class httpManager {
                         ratelimit: true
                     }
                 }
-                if (res.status < 204) {
+                if (res.status < 205) {
                     response(res.data)
                 } else {
             
@@ -120,7 +120,7 @@ module.exports = class httpManager {
                             ratelimit: true
                         }
                     }
-                    if (res.status < 204) {
+                    if (res.status < 205) {
                         response(res.data)
                     } else {
                 
@@ -201,7 +201,7 @@ module.exports = class httpManager {
                             ratelimit: true
                         }
                     }
-                    if (res.status < 204) {
+                    if (res.status < 205) {
                         response(res.data)
                     } else {
                 
@@ -283,7 +283,7 @@ module.exports = class httpManager {
                             ratelimit: true
                         }
                     }
-                    if (res.status < 204) {
+                    if (res.status < 205) {
                         response(res.data)
                     } else {
                 
@@ -367,7 +367,7 @@ module.exports = class httpManager {
                     ratelimit: true
                 }
             }
-            if (res.status < 204) {
+            if (res.status < 205) {
                 response(res.data)
             } else {
         
@@ -449,7 +449,7 @@ module.exports = class httpManager {
                     ratelimit: true
                 }
             }
-            if (res.status < 204) {
+            if (res.status < 205) {
                 response(res.data)
             } else {
         
