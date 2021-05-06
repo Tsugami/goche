@@ -1,6 +1,7 @@
 const WebsocketManager = require('../requests/WebsocketManager')
 const GocheInfo = require('../GocheInfo')
 const WebSocket = require('ws')
+const GatewayError = require('../error/GatewayError')
 
 module.exports = class ConnectionManager {
     constructor(websocketManager = new WebsocketManager(), shardID) {
@@ -27,12 +28,23 @@ module.exports = class ConnectionManager {
     }
     
     ok(type, intents, id) {
+
         this.ws.on('open', (ws) => this.identify(type, intents))
         this.ws.on('error', (err) => {
+            switch(err.stack.code) {
+                case 'ETIMEDOUT':
+                    console.error('There was a network connection failure and therefore it was not possible to connect to Discord')
+                break;
+            }
+            
             this.connecting()
         })
-        this.ws.on('close', (ws, code, reason) => {
+        this.ws.on('close', (code, reason) => {
             this.ready = false
+            if (typeof GatewayError[code] === 'object') {
+                GatewayError.emitError(GatewayError[code], true, this.shardID)
+            }
+            
         })
     
         this.ws.on('message', async (message) => {
@@ -42,10 +54,12 @@ module.exports = class ConnectionManager {
                 if (typeof data.d === 'object') {
                     data.d.shard = this.shardID
                 }
-                if (this.websocketManager.gocheClient.ignoreCacheManager.get(data.t) === true) {
+                if (this.websocketManager.gocheClient.ignoreCacheManager.get(data.t).ok === true) {
                     return
                 }
             }
+
+    
 
             this.websocketManager.gocheClient.heartbeart.wsReceivedMessage++
             if (typeof data.s === 'number') {
@@ -99,6 +113,7 @@ module.exports = class ConnectionManager {
         this.websocketManager.gocheClient.goche.listenerManager.listeners
         .filter((eventClass) => eventClass.eventName === 'GATEWAY_LISTENER')
         .map((eventClass) => eventClass.on(new OPIdentify(data, true)))
+
         data.shard = this.shardID
         this.ws.send(JSON.stringify(data))
         return data
@@ -175,7 +190,7 @@ module.exports = class ConnectionManager {
     async identify(type, intents) {
         this.ready = true
         this.websocketManager.gocheClient.goche.activities.setListening(`Sharding on ${this.shardID}`)
-      
+    
         const data = {
             op: 2,
             d: {

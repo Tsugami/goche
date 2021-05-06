@@ -5,7 +5,7 @@
 
 module.exports = class User {
     constructor(user) {
-        this.type = 'user'
+        this.type = user.bot === true ? 'user' : 'bot'
         this.username = user.username || ''
         this.discriminator = user.discriminator  || ''
         this.id = user.id || ''

@@ -11,10 +11,6 @@ module.exports = class Listeners {
         this.eventName = ''
         this.gocheLibrary = client
         this.op = 2
-    }
-    constructor() {
-
-    }
-    
+    } 
     
 }

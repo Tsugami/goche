@@ -1,16 +1,8 @@
-module.exports = class MethodAction {
+const ActionManager = require('./ActionManager');
+
+module.exports = class MethodAction extends ActionManager {
     constructor() {
-        this.data = {}
-        this.error = false
-    }
- 
-
-    onError(data) {
-        return data;
-    }
-
-
-    onData(data) {
-        return data;
+        this.onData = function(data) {  }
+        this.onError = function(data) {  }
     }
 }

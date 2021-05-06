@@ -18,65 +18,9 @@ module.exports = class GocheController {
     }
 
     async updateCache(data = Payload, shard = 0) {
+       
         switch (this.gocheLibrary.mode) {
-            case 'light':
-                
-                switch (data.t) {
-                    
-                    case 'READY': 
-                        this.gocheClient.uptime = Date.now()
-                        this.gocheClient.selfUser = new SelfUser(data.d)
-                        this.data = data.d
-                        this.gocheClient.goche.listenerManager.listeners
-                        .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                        .map((eventClass) => eventClass.on(data))
-
-                        this.gocheLibrary.slashManager.build()
-                    break;
-                    case 'MESSAGE_CREATE':
-
-                        if (typeof data.d.guild_id === 'string') {
-                            this.gocheClient.goche.listenerManager.listeners
-                            .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                            .map((eventClass) => eventClass.on(new Message(data.d, this.gocheClient.goche)))
-                        } else {
-                            /**
-                             * It is possible that it is a other type of channel
-                             */
-                             this.gocheClient.goche.listenerManager.listeners
-                             .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                             .map((eventClass) => eventClass.on(new Message(data.d, this.gocheClient.goche)))
-                        }
-                    break;
-                    case 'GUILD_CREATE':
-                        
-                    break;
-                    case 'CHANNEL_CREATE': 
-                        const channel = new Channel(data.d, this.gocheLibrary)
-                        this.gocheClient.guilds.get(data.d.guild_id).channels.set(channel.id, channel)
-                        await this.gocheClient.goche.listenerManager.listeners
-                        .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                        .map((eventClass) => eventClass.on(channel))
-                    break;
-                    case 'CHANNEL_DELETE': 
-                        
-                        this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
-                        await this.gocheClient.goche.listenerManager.listeners
-                        .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                        .map((eventClass) => eventClass.on(channel))
-                    break;
-                    case 'CHANNEL_UPDATE': 
-                        this.gocheClient.guilds.get(data.d.guild_id).channels.delete(channel.id)
-                        this.gocheClient.guilds.get(data.d.guild_id).channels.set(channel.id, channel)
-                        await this.gocheClient.goche.listenerManager.listeners
-                        .filter((eventClass) => eventClass.eventName === `${data.t}`)
-                        .map((eventClass) => eventClass.on(channel))
-                    break;
-                    default:
     
-
-                }
-            break
 
             case 'profile':
                 switch (data.t) {
@@ -91,7 +35,6 @@ module.exports = class GocheController {
                     case 'MESSAGE_CREATE':
                 
                         if (typeof data.d.guild_id === 'string') {
-                           
                             this.gocheClient.goche.listenerManager.listeners
                             .filter((eventClass) => eventClass.eventName === `${data.t}`)
                             .map((eventClass) => eventClass.on(new Message(data.d,  this.gocheClient.guilds.get(data.d.guild_id), this.gocheClient.goche)))
@@ -107,6 +50,12 @@ module.exports = class GocheController {
                              .map((eventClass) => eventClass.on(new Message(data.d, null, this.gocheClient.goche)))
                              */
                         }
+                    break;
+                    case 'GUILD_MEMBER_ADD':
+                        this.guildMemberAdd(data)
+                    break;
+                    case 'GUILD_MEMBER_REMOVE':
+                        this.guildMemberRemove(data)
                     break;
                     case 'GUILD_CREATE':
                         this.guildCreate(data)
@@ -134,6 +83,18 @@ module.exports = class GocheController {
         }
     }
 
+    async guildMemberAdd(data) {
+        if (typeof data.d.guild_id === 'string') {
+            this.gocheClient.guilds.get(data.d.guild_id).members.set(data.d.user.id, new Member(data.d))
+        }
+    }
+
+
+    async guildMemberRemove(data) {
+        if (typeof data.d.guild_id === 'string') {
+            this.gocheClient.guilds.get(data.d.guild_id).members.delete(data.d.user.id)
+        }
+    }
 
     async intereactionCreate(data) {
         await this.gocheClient.goche.listenerManager.listeners

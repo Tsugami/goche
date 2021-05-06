@@ -1,9 +1,18 @@
-const AddBanAction = require("../action/guild/AddBanAction")
-const Member = require("./Member")
+const ErrorRequest = require('../action/ErrorRequest')
+const AddBanAction = require('../action/guild/AddBanAction')
+const CreateChannelAction = require('../action/guild/CreateChannelAction')
+const MemberGuildAction = require('../action/guild/MemberGuildAction')
+const ModifyChannelAction = require('../action/guild/ModifyChannelAction')
+const RoleManagerAction = require('../action/guild/RoleManagerAction')
+const MethodAction = require('../action/MethodAction')
+const GocheClient = require('../manager/GocheClient')
+const BanInfo = require('./BanInfo')
+const Member = require('./Member')
+const User = require('./User')
 
 
 module.exports = class Guild {
-    constructor(guild, gocheClient, shard = 0) {
+    constructor(guild, gocheClient = new GocheClient(), shard = 0) {
         this.id = guild.id || ''
         this.name = guild.name || ''
         this.description = guild.description || ''
@@ -22,8 +31,9 @@ module.exports = class Guild {
         this.unavailable = guild.unavailable
         this.membersCount = guild.member_count
         this.voiceStates = guild.voice_states
-        this.shardID = shard
+        this.shardID = (this.id % gocheClient.shard)
         this.roles = new Map()
+        this.roleManager = new RoleManagerAction(gocheClient, this)
         this.emojis = new Map()
         this.members = new Map()
         this.channels = new Map()
@@ -42,28 +52,159 @@ module.exports = class Guild {
         this.welcomeScreen = ''
     }
 
-
-    ban(member, delDays) {
-        if (member instanceof Member) {
-            return new AddBanAction(this, member.user, delDays)
-        } else {
-            if (typeof member === 'undefined' && member === null) {
-                Error("Member return is null")
+    async fetchUser(id) {
+        let user
+        await this.gocheClient.goche.requestManager.getRequest(`users/${id}`, (data) => {
+            if (data.error === true) {
+                user = new ErrorRequest(data)
                 return
             }
-            return new AddBanAction(this.getUserByID(member), member.user, delDays)
+    
+            user = new User(data)
+        })
+        return user
+    }
+
+
+    async fetchBans(id) {
+        if (typeof id === 'string') {
+            await this.gocheClient.goche.requestManager.getRequest(`guilds/${this.id}/bans`, (data) => {
+                if (data.error === true) {
+                    user = new ErrorRequest(data)
+                    return
+                }
+                const arrayBan = []
+                for (let dataBan of arrayBan) {
+                    arrayBan.push(new BanInfo(dataBan))
+                }
+                return arrayBan
+            })
+        } else { 
+            Error('Set the Argument to String (fetchUserBan[Guild])')
+        }
+        return []
+    }
+
+
+    async fetchUserBan(id) {
+        if (typeof id === 'string') {
+            await this.gocheClient.goche.requestManager.getRequest(`guilds/${this.id}/bans/${id}`, (data) => {
+                if (data.error === true) {
+                    return data
+                }
+                const arrayBan = []
+                return new BanInfo(dataBan)
+            })
+        } else { 
+            Error('Set the Argument to String (fetchUserBan[Guild])')
+        }
+        return {
+            type: 'http/unknown',
+            error: true,
+            errorInfo: {
+                message: 'It seems that there was a leak of if and that was why there was this return. Don\'t worry, everything is fine. (fetchUserBan[Guild])'
+            }
         }
     }
 
-    kick(member) {
-        if (member instanceof Member) {
-            return new AddBanAction(this, member.user, delDays, this.gocheClient)
+    async ban(member, delDays) {
+        if (member instanceof User ) {
+            if (member instanceof User) {
+                return new AddBanAction(this, member, delDays, this.gocheClient)
+            } 
         } else {
-            if (typeof member === 'undefined' && member === null) {
-                Error("Member return is null")
-                return
+            return new AddBanAction(this, null, delDays, this.gocheClient)
+        }
+    }
+
+    async removeBan(member) {
+        if (typeof member === 'string') {
+            await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.id}/bans/${id}`, (data) => {
+                if (data.error === true) {
+                    return data
+                }
+                return new BanInfo(dataBan)
+            })
+        } else {
+            Error('Set the Argument to String (removeBan[Guild])')
+        }
+        return {
+            type: 'http/unknown',
+            error: true,
+            errorInfo: {
+                message: 'It seems that there was a leak of if and that was why there was this return. Don\'t worry, everything is fine. (fetchUserBan[Guild])'
             }
-            return new AddBanAction(this.getUserByID(member), member.user, delDays, this.gocheClient)
+        }
+    }
+
+    async kick(member) {
+        if (typeof member === 'string') {
+            const memberGet = this.members.get(member)
+            if (typeof memberGet === 'object') {
+                this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.id}/members/${memberGet.user.id}`, (data) => {
+                    if (data.error === true) {
+                        return data
+                    }
+                    return member 
+                })
+            } else {
+                return {
+                    type: 'unknown/member',
+                    error: true
+                }
+            }
+            return
+        } else {
+            return {
+                type: 'unknown/output',
+                error: true
+            }
+        }
+    
+    }
+
+
+    async selfSetNick(nickname, reason = '') {
+        let selfSetNickClass = class SelfSetNick {
+            constructor(nickname) {
+                this.nick = nickname.nick
+                this.reason = nickname.reason
+            }
+        }
+        await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.id}/members/@me/nick`, (data) => {
+            if (data.error === true) {
+                return new ErrorRequest(data)
+            }
+            return new selfSetNickClass(data)
+        }, {
+            nick: nickname,
+            reason: reason
+        })
+
+        return new selfSetNickClass({
+            nick: nickname,
+            reason: reason
+        })
+    }
+
+
+    createChannel() {
+        return new CreateChannelAction(this.gocheClient, this)
+    }
+
+    editTextChannel() {
+        return new ModifyChannelAction(this.gocheClient, this)
+    }
+
+
+    modifyMember(id) {
+        if (typeof id === 'string') {
+            const member = this.members.get(id)
+            if (typeof member === 'object') {
+                return new MemberGuildAction(this.gocheClient, this, member)
+            } 
+        } else {
+            Error('Set the Argument to String (modifyMember[Guild])')
         }
     }
     

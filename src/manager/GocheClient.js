@@ -1,3 +1,4 @@
+const Guild = require('../entities/Guild')
 const SelfUser = require('../entities/SelfUser')
 const GocheLibrary = require('../GocheLibrary')
 const Heartbeart = require('../internal/Heartbeart')
@@ -23,7 +24,9 @@ module.exports = class GocheClient {
             value: this.goche.token
         })
         this.guilds = new Map()
-        this.intents = 33554432
+        Object.assign(this.guilds, Guild)
+        
+        this.intents = 0
         this.wsManager = new WebsocketManager(this)
         this.intentManager = new IntentsManager()
         this.cacheManager = new CacheManager()
