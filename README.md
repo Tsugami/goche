@@ -61,7 +61,7 @@ const goche = new GocheLibrary('token')
                      ])
 ```
 
-There mentioned `sharding` is the mode that is starting within the profile and on the other side that is number is the number of shards. Bearing in mind that the Gaucho creates several websocket connections, a certain limit may take longer to connect. Goche has limitations when it comes to connecting to a websocket.
+There mentioned `sharding` is the mode that is starting within the profile and on the other side that is number is the number of shards. Bearing in mind that the Goche creates several websocket connections, a certain limit may take longer to connect. Goche has limitations when it comes to connecting to a websocket.
 
 
 ## Connection Listener

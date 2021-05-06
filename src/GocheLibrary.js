@@ -55,6 +55,7 @@ module.exports = class GocheLibrary {
      * ```
      */
     createProfile(mode, shardMax) {
+        
         this.mode = 'profile'
         if (mode === 'sharding') {
             if (typeof shardMax === 'number') {

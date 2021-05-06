@@ -33,6 +33,15 @@ module.exports = class GocheController {
                         .map((eventClass) => eventClass.on(data))
 
                     break;
+                    case 'GUILD_ROLE_UPDATE':
+                        this.guildRoleUpdate(data)
+                    break;
+                    case 'GUILD_ROLE_DELETE':
+                        this.guildRoleDelete(data)
+                    break;
+                    case 'GUILD_ROLE_CREATE':
+                        this.guildRoleCreate(data)
+                    break;
                     case 'MESSAGE_CREATE':
                 
                         if (typeof data.d.guild_id === 'string') {
@@ -82,6 +91,22 @@ module.exports = class GocheController {
                 }
             break;
         }
+    }
+
+    async guildRoleDelete(data) {
+        if (typeof data.d.guild_id === 'string') {
+            this.gocheClient.guilds.get(data.d.guild_id).roles.delete(data.d.role_id)
+       }
+    }
+
+    async guildRoleUpdate(data) {
+        
+    }
+
+    async guildRoleCreate(data) {
+       if (typeof data.d.guild_id === 'string') {
+            this.gocheClient.guilds.get(data.d.guild_id).roles.set(data.d.role.id, new Role(data.d.role.id, this.gocheClient.guilds.get(data.d.guild_id)))
+       }
     }
 
     async guildMemberAdd(data) {

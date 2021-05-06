@@ -1,4 +1,5 @@
 const Guild = require("../../entities/Guild")
+const Role = require("../../entities/Role")
 const GocheClient = require("../../manager/GocheClient")
 
 
@@ -58,18 +59,16 @@ module.exports = class RoleCreateAction {
     }
 
     async done() {
-        await this.gocheClient.goche.requestManager.postRequest(`guilds/${this.guild.id}/roles`, (data) => {
+        let dataRole
+        await this.gocheClient.goche.requestManager.postRequest(`guilds/${this.guild.id}/roles`, async (data) => {
             if (data.error === true) {
-                return data
+                dataRole = data
+            } else {
+                dataRole = new Role(data, this.guild)
             }
-            return this.guild.roles.get(data.id)
+        
         }, this.data)
-        return {
-            type: 'http/slow',
-            error: true,
-            errorInfo: {
-                message: 'Probably the request was not made'
-            }
-        }
+        
+        return dataRole
     }
 }

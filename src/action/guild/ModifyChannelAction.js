@@ -34,11 +34,15 @@ module.exports = class ModifyChannelAction {
     }
 
     async done() {
+        let dataResolve
         await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/channels`, (data) => {
             if (data.error === true) {
-                return data
+                dataResolve = data
+            } else { 
+                dataResolve = this.guild.channels.get(data.id)
             }
-            return this.guild.channels.get(data.id)
+        
+            return dataResolve
         }, this.data)
         return {
             type: 'http/slow',

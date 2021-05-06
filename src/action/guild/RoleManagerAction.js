@@ -1,5 +1,6 @@
 const Guild = require("../../entities/Guild")
 const GocheClient = require("../../manager/GocheClient")
+const RoleCreateAction = require("./RoleCreateAction")
 
 
 module.exports = class RoleManagerAction {
@@ -99,42 +100,7 @@ module.exports = class RoleManagerAction {
     }
 
 
-    async createRole(roleID) {
-        if (typeof memberID === 'string') {
-            if (typeof roleID === 'string') {
-                const member = this.guild.members.get(memberID)
-                if (typeof member === 'object') {
-                    const role = this.guild.roles.get(roleID)
-                    if (typeof role === 'object') {
-                        await this.gocheClient.goche.requestManager.otherRequest('delete', `guilds/${this.guild.id}/members/${member.user.id}/roles/${role.id}`, (data) => {
-                            if (data.error === true) {
-                                return data
-                            }
-                            return member
-                        }, this.data)
-                    } else {
-                        return {
-                            type: 'unknown/role',
-                            error: true, 
-                            errorInfo: {
-                                message: 'This role does not exist or has not been registered.'
-                            }
-                        }
-                    }
-                } else {
-                    return {
-                        type: 'unknown/member',
-                        error: true, 
-                        errorInfo: {
-                            message: 'Member has not been registered as a cache or does not exist'
-                        }
-                    }
-                }
-            } else {
-                Error('Set the Argument to String (RoleManagerAction.addRole[RoleID])')
-            }
-        } else {
-            Error('Set the Argument to String (RoleManagerAction.addRole[MemberID])')
-        }
+    async createRole(name) {
+        return new RoleCreateAction(this.gocheClient, this.guild)   
     }
 }
