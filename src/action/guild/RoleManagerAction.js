@@ -50,10 +50,10 @@ module.exports = class RoleManagerAction {
                     }
                 }
             } else {
-                Error('Set the Argument to String (RoleManagerAction.addRole[RoleID])')
+                throw Error('Set the Argument to String (RoleManagerAction.addRole[RoleID])')
             }
         } else {
-            Error('Set the Argument to String (RoleManagerAction.addRole[MemberID])')
+            throw Error('Set the Argument to String (RoleManagerAction.addRole[MemberID])')
         }
     }
 
@@ -93,10 +93,10 @@ module.exports = class RoleManagerAction {
                     }
                 }
             } else {
-                Error('Set the Argument to String (RoleManagerAction.addRole[RoleID])')
+                throw Error('Set the Argument to String (RoleManagerAction.addRole[RoleID])')
             }
         } else {
-            Error('Set the Argument to String (RoleManagerAction.addRole[MemberID])')
+            throw Error('Set the Argument to String (RoleManagerAction.addRole[MemberID])')
         }
     }
 
@@ -128,7 +128,7 @@ module.exports = class RoleManagerAction {
                 }
             }
         } else {
-            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+            throw Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
         }
     }
 
@@ -160,7 +160,7 @@ module.exports = class RoleManagerAction {
                 }
             }
         } else {
-            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+            throw Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
         }
     }
 
@@ -181,7 +181,7 @@ module.exports = class RoleManagerAction {
                 }
             }
         } else {
-            Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+            throw Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
         }
     }
 
