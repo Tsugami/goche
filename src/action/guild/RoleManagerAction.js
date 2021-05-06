@@ -1,5 +1,6 @@
 const Guild = require("../../entities/Guild")
 const GocheClient = require("../../manager/GocheClient")
+const ModifyRoleAction = require("./ModifyRoleAction")
 const RoleCreateAction = require("./RoleCreateAction")
 
 
@@ -133,12 +134,12 @@ module.exports = class RoleManagerAction {
 
 
 
-    setPositionRole(id, newPosition) {
+    async setPositionRole(id, newPosition) {
         let dataRole
         if (typeof id === 'string') {
             const getRole = this.guild.roles.get(id)
             if (typeof getRole === 'object') {
-                await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles/`, (data) => {
+                await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles`, (data) => {
                     if (data.error === true) {
                         dataRole = data
                     } else {
@@ -164,22 +165,12 @@ module.exports = class RoleManagerAction {
     }
 
 
-    modifyRole(id) {
+    async modifyRole(id) {
         let dataRole
         if (typeof id === 'string') {
             const getRole = this.guild.roles.get(id)
             if (typeof getRole === 'object') {
-                await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles/`, (data) => {
-                    if (data.error === true) {
-                        dataRole = data
-                    } else {
-                        dataRole = getRole
-                    } 
-                }, {
-                    id: getRole.id,
-                    position: newPosition
-                })
-                return dataRole
+                return new ModifyRoleAction(this.gocheClient, this.guild, getRole)
             } else {
                 return {
                     type: 'role/unknown',

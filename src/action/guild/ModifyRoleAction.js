@@ -1,4 +1,5 @@
 const Role = require("../../entities/Role")
+const Color = require("../../tools/Color")
 
 
 
@@ -31,18 +32,13 @@ module.exports = class ModifyRoleAction {
     }
 
     setColor(color = 0) {
-        if (typeof color === 'number') {
-            console.log(typeof color)
-            const conversion = new Color().ToNumber(color)
-            if (conversion.error === 'true') {
-                Error('There was a problem making a cover')
-            } else {
-                this.data.color = conversion.color
-            }
-           
+        const conversion = new Color().ToNumber(color)
+        if (conversion.error === 'true') {
+            Error('There was a problem making a cover')
         } else {
-            Error('You need to insert a Number in the Argument (setColor[RoleCreateAction])')
+            this.data.color = conversion.color
         }
+       
         return this
     }
 
@@ -66,7 +62,8 @@ module.exports = class ModifyRoleAction {
 
     async done() {
         let dataRole
-        await this.gocheClient.goche.requestManager.postRequest(`guilds/${this.guild.id}/roles/${this.role.id}`, async (data) => {
+    
+        await this.gocheClient.goche.requestManager.otherRequest('patch', `guilds/${this.guild.id}/roles/${this.role.id}`, async (data) => {
             if (data.error === true) {
                 dataRole = data
             } else {
