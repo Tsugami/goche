@@ -160,7 +160,7 @@ module.exports = class RoleManagerAction {
                 }
             }
         } else {
-            throw Error('You need to enter the ID to delete this role! (RoleManagerAction.deleteRole[MemberID])')
+            throw Error('You need to enter the ID with string to move this role! (RoleManagerAction.deleteRole[MemberID])')
         }
     }
 

@@ -1,3 +1,4 @@
+const ModifyChannelAction = require('../action/guild/ModifyChannelAction')
 const GocheLibrary = require('../GocheLibrary')
 const Message = require('./Message')
 const MessageReference = require('./MessageReference')
@@ -59,32 +60,64 @@ module.exports = class Channel {
      * ```
      */
     async sendMessage(content) {
-        let dataMessage = {}
+        let dataMessage = { }
         if (typeof content === 'object') {
             const goche = this.gocheLibrary
             const guild = this.guild
             await this.gocheLibrary.requestManager.postRequest(`channels/${this.id}/messages`, async function(res) {
-               res.data.guild = guild
+               res.guild = guild
                
-                const message = new Message(res.data, guild, goche)
-                dataMessage = message
+                if (res.error === true) {
+                    dataMessage = res
+                } else {
+                    const message = new Message(res.data, guild, goche)
+                    dataMessage = message
+                }
             
             }, content)
         } else {
             const goche = this.gocheLibrary
             const guild = this.guild
             await this.gocheLibrary.requestManager.postRequest(`channels/${this.id}/messages`, async function(res) {
-               res.data.guild = guild
-               
-                const message = new Message(res.data, guild, goche)
-                dataMessage = message
+               res.guild = guild
+                if (res.error === true) {
+                    dataMessage = res
+                } else {
+                    const message = new Message(res.data, guild, goche)
+                    dataMessage = message
+                }
+            
             
             }, {
                 content: content
             })
         }
-    
         return dataMessage
     }
+
+
+    modifyChannel() {
+        const modify = new ModifyChannelAction(this.guild.gocheClient, this.guild)
+        modify.data.type = this.type
+        return modify
+    }
+
+
+
+    delete() {
+        let dataMessage = null
+        await this.gocheLibrary.requestManager.otherRequest('delete', `channels/${this.id}/messages`, async (res) => {
+            res.guild = guild
+             if (res.error === true) {
+                 dataMessage = res
+             } else {
+                 dataMessage = this
+             }
+        })
+        return dataMessage
+    }
+
+
+
 
 }
