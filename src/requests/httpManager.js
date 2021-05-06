@@ -1,4 +1,6 @@
 const { default: axios } = require('axios')
+const RateLimit = require('../action/RateLimit')
+const RateLimitBlock = require('../action/RateLimitBlock')
 const JSONError = require('../error/JSONError')
 const RequestError = require('../error/RequestError')
 const GocheInfo = require('../GocheInfo')
@@ -6,10 +8,9 @@ const GocheInfo = require('../GocheInfo')
 module.exports = class httpManager {
     constructor(gocheLibrary) {
         this.gocheLibrary = gocheLibrary
-        this.queueRatelimit = []
+        this.ratelimit = new RateLimit()
     }
     async otherRequest(method, path, response, data) {
-
         switch(method) {
             case 'delete':
             return axios.delete(`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`, {
@@ -25,6 +26,7 @@ module.exports = class httpManager {
             .then(res => {
                     
                 if (res.status === 429) {
+                    this.ratelimit.addQueue(new RateLimitBlock(this.otherRequest(method, path, response, data)))
                     this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                     response({
                         error: true,
@@ -107,6 +109,7 @@ module.exports = class httpManager {
                 .then(res => {
                     
                     if (res.status === 429) {
+                        this.ratelimit.addQueue(new RateLimitBlock(this.otherRequest(method, path, response, data)))
                         this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                         response({
                             error: true,
@@ -188,6 +191,7 @@ module.exports = class httpManager {
                 .then(res => {
                     
                     if (res.status === 429) {
+                        this.ratelimit.addQueue(new RateLimitBlock(this.otherRequest(method, path, response, data)))
                         this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                         response({
                             error: true,
@@ -270,6 +274,7 @@ module.exports = class httpManager {
                 .then(res => {
                     
                     if (res.status === 429) {
+                        this.ratelimit.addQueue(new RateLimitBlock(this.otherRequest(method, path, response, data)))
                         this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                         response({
                             error: true,
@@ -352,8 +357,10 @@ module.exports = class httpManager {
             },
         })
         .then(res => {
-                    
+
             if (res.status === 429) {
+                
+                this.ratelimit.addQueue(new RateLimitBlock(this.postRequest(path, response, data)))
                 this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                 response({
                     error: true,
@@ -436,12 +443,14 @@ module.exports = class httpManager {
         .then(res => {
                     
             if (res.status === 429) {
+                this.ratelimit.addQueue(new RateLimitBlock(this.postRequest(path, response, data)))
                 this.gocheLibrary.gocheClient.heartbeart.ratelimit++
                 response({
                     error: true,
                     errorInfo: RequestError[res.status],
                     ratelimit: true
                 })
+                th
                 return {
                     type: 'http',
                     error: true,

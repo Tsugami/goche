@@ -83,7 +83,7 @@ module.exports = class Channel {
                 if (res.error === true) {
                     dataMessage = res
                 } else {
-                    const message = new Message(res.data, guild, goche)
+                    const message = new Message(res, guild, goche)
                     dataMessage = message
                 }
             
@@ -96,7 +96,7 @@ module.exports = class Channel {
     }
 
 
-    modifyChannel() {
+    async modifyChannel() {
         const modify = new ModifyChannelAction(this.guild.gocheClient, this.guild)
         modify.data.type = this.type
         return modify
@@ -104,7 +104,7 @@ module.exports = class Channel {
 
 
 
-    delete() {
+    async delete() {
         let dataMessage = null
         await this.gocheLibrary.requestManager.otherRequest('delete', `channels/${this.id}/messages`, async (res) => {
             res.guild = guild

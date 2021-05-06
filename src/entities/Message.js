@@ -16,7 +16,9 @@ const type = {
 
 module.exports = class Message {
     constructor(message, guild = new Guild(), gocheLibrary = new GocheLibrary()) {
-  
+        if (typeof message === 'undefined') {
+            console.log(message)
+        }
         this.gocheLibrary = gocheLibrary
         this.guild = guild
         this.id = message.id

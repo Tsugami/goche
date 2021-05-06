@@ -15,6 +15,7 @@ module.exports = class RequestControlAction {
     setQueue(number) {
         if (typeof number === 'number') {
             this.queue = number
+            return this
         }
         this.queue = 5 // Default
         return this

@@ -5,6 +5,7 @@ const httpManager = require('./requests/httpManager')
 const GocheController = require('./hooks/GocheController')
 const SlashManager = require('./action/guild/SlashCommand')
 const Activities = require('./action/user/Activities')
+const RequestControlAction = require('./action/RequestControlAction')
 
 
 
@@ -31,6 +32,9 @@ module.exports = class GocheLibrary {
         this.activities = new Activities()
                                 .setStatus('online')
         
+        this.requestConfigBuilder = new RequestControlAction()
+                                                .setQueue(5) // Default is 5
+
 
     }
 
@@ -221,6 +225,13 @@ module.exports = class GocheLibrary {
             }
         }
     }
+
+
+    setConfigRequestBuilder(requestConfig = new RequestControlAction()) {
+        if (requestClass instanceof RequestControlAction) {
+            
+        }
+    } 
 
     
 }
