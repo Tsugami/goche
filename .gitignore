@@ -1,3 +1,11 @@
+# Ignore list of packages that are installed in the directory
 node_modules
+
+# This is not necessary.
 package-lock.json
+
+# Directory for you to take your tests if you want to implement something.
 test
+
+# To ignore unnecessary folder
+.vscode

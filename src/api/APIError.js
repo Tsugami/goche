@@ -1,5 +1,1 @@
-
-
-module.exports = class APIError {
-
-}
+module.exports = class APIError {};

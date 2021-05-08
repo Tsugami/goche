@@ -1,47 +1,59 @@
-const Message = require('./Message')
-
-
+const Message = require('./Message');
 
 module.exports = class MessageReference {
-    constructor(messageID, allowedMentions, gocheLibrary, guild, channelID) {
-        this.gocheLibrary = gocheLibrary
-        this.guild = guild
-        this.channelID = channelID
-        this.messageID = messageID
-        this.allowedMentions = allowedMentions || {
-            users: [],
-            parse: []
-        }
-    }
+	constructor(
+		messageID,
+		allowedMentions,
+		gocheLibrary,
+		guild,
+		channelID
+	) {
+		this.gocheLibrary = gocheLibrary;
+		this.guild = guild;
+		this.channelID = channelID;
+		this.messageID = messageID;
+		this.allowedMentions = allowedMentions || {
+			users: [],
+			parse: [],
+		};
+	}
 
-    async sendMessage(content) {
-        let dataMessage = {}
+	async sendMessage(content) {
+		let dataMessage = {};
 
-        if (typeof content === 'object') {
-            await this.gocheLibrary.requestManager.postRequest( 
-                `channels/${this.message.channelID}/messages/${this.message.id}`, 
-                function response(res) {}, content
-            )
-        } else {
-            const goche = this.gocheLibrary
-            const guild = this.guild
-            await this.gocheLibrary.requestManager.postRequest( 
-                `channels/${this.channelID}/messages`, 
-                
-                function response(res) {
-                    const message = new Message(res.data, guild, goche)
-                    message.message_reference = res.referenced_message
-                    dataMessage = message
-                }, {
-                    content: content,
-                    allowed_mentions: this.mention,
-                    message_reference: {
-                        message_id: this.messageID
-                    }
-                }
-            )
-        }
-        return dataMessage
-    }
-  
-}
+		if (typeof content === 'object') {
+			await this.gocheLibrary.requestManager.postRequest(
+				`channels/${this.message.channelID}/messages/${this.message.id}`,
+				function response(res) {},
+				content
+			);
+		} else {
+			const goche = this.gocheLibrary;
+			const guild = this.guild;
+			await this.gocheLibrary.requestManager.postRequest(
+				`channels/${this.channelID}/messages`,
+
+				function response(res) {
+					const message = new Message(
+						res.data,
+						guild,
+						goche
+					);
+					message.message_reference =
+						res.referenced_message;
+					dataMessage = message;
+				},
+				{
+					content: content,
+					allowed_mentions: this
+						.mention,
+					message_reference: {
+						message_id: this
+							.messageID,
+					},
+				}
+			);
+		}
+		return dataMessage;
+	}
+};

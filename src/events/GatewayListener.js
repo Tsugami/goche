@@ -6,15 +6,15 @@ const GocheListener = require('./listeners/GocheListener');
  * Remembering you cannot manage anything using this event.
  */
 module.exports = class GatewayListener extends GocheListener {
-    constructor(data, shardID) {
-        super()
-        this.eventName = 'GATEWAY_LISTENER'
-        this.gocheLibrary = new GocheLibrary()
-        this.shardID = shardID
-    }
-    /**
-     * 
-     * @param {*} OPIdentify 
-     */
-    on(data) {  }
-}
+	constructor(data, shardID) {
+		super();
+		this.eventName = 'GATEWAY_LISTENER';
+		this.gocheLibrary = new GocheLibrary();
+		this.shardID = shardID;
+	}
+	/**
+	 *
+	 * @param {*} OPIdentify
+	 */
+	on(data) {}
+};
