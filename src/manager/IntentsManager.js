@@ -24,7 +24,6 @@ module.exports = class IntentsManager {
 				this.intentsSelected.push(
 					this.intentsList[intents]
 				);
-
 				this.intents += this.intentsList[
 					intents
 				];

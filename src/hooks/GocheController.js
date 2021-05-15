@@ -11,6 +11,7 @@ const VoiceState = require('../entities/VoiceState');
 const MemberState = require('../entities/MemberState');
 const Interaction = require('../entities/Interaction');
 const Role = require('../entities/Role');
+const TextChannel = require('../entities/TextChannel');
 
 module.exports = class GocheController {
 	constructor(gocheLibrary = new GocheLibrary()) {
@@ -220,37 +221,34 @@ module.exports = class GocheController {
 		) {
 			const guild = new Guild(data.d, this.gocheClient);
 			for (let channel of data.d.channels) {
-				if (channel.type === 4) {
-					guild.category.set(
-						channel.id,
-						new Channel(
-							channel,
-							guild,
-							this.gocheClient.goche
-						)
-					);
-				} else {
-					if (channel.type === 2) {
-						guild.voiceChannels.set(
-							channel.id,
-							new Channel(
-								channel,
-								guild,
-								this.gocheClient.goche
-							)
-						);
-					} else {
+				switch(channel.type) {
+					case 0:
 						guild.channels.set(
 							channel.id,
-							new Channel(
+							new TextChannel(
 								channel,
 								guild,
 								this.gocheClient.goche
 							)
 						);
-					}
+						break;
+					case 2:
+						guild.voiceChannels.set(
+							channel.id,
+							new VoiceChannel(
+								channel,
+								guild,
+								this.gocheClient.goche
+							)
+						);
+					break;
+					case 4:
+						// Category
+					break;
+
 				}
 			}
+			
 			for (let member of data.d.members) {
 				guild.members.set(
 					member.user.id,
@@ -286,35 +284,31 @@ module.exports = class GocheController {
 		} else {
 			const guild = new Guild(data.d, this.gocheClient);
 			for (let channel of data.d.channels) {
-				if (channel.type === 4) {
-					guild.category.set(
-						channel.id,
-						new Channel(
-							channel,
-							guild,
-							this.gocheClient.goche
-						)
-					);
-				} else {
-					if (channel.type === 2) {
-						guild.voiceChannels.set(
-							channel.id,
-							new Channel(
-								channel,
-								guild,
-								this.gocheClient.goche
-							)
-						);
-					} else {
+				switch(channel.type) {
+					case 0:
 						guild.channels.set(
 							channel.id,
-							new Channel(
+							new TextChannel(
 								channel,
 								guild,
 								this.gocheClient.goche
 							)
 						);
-					}
+						break;
+					case 2:
+						guild.voiceChannels.set(
+							channel.id,
+							new VoiceChannel(
+								channel,
+								guild,
+								this.gocheClient.goche
+							)
+						);
+					break;
+					case 4:
+						// Category
+					break;
+
 				}
 			}
 			for (let member of data.d.members) {
@@ -354,7 +348,8 @@ module.exports = class GocheController {
 		const stateUserVoice = new MemberState(
 			data.d.member,
 			data,
-			guild
+			guild,
+            this.gocheLibrary
 		);
 
 		stateUserVoice.leaved = Date.now();
@@ -403,12 +398,14 @@ module.exports = class GocheController {
 		const stateVoice = new VoiceState(
 			guild.voiceChannels.get(data.d.channel_id),
 			guild,
-			data.d
+			data.d,
+            this.gocheLibrary
 		);
 		const stateUserVoice = new MemberState(
 			data.d.member,
 			guild.voiceChannels.get(data.d.channel_id),
-			guild
+			guild,
+            this.gocheLibrary
 		);
 		const channel = guild.voiceChannels.get(data.d.channel_id);
 
@@ -489,6 +486,7 @@ module.exports = class GocheController {
 		const guild = this.gocheClient.guilds.get(data.d.guild_id);
 		const voiceChannel = new VoiceChannel(
 			data.d,
+            guild,
 			this.gocheLibrary
 		);
 		const channel = new Channel(
@@ -560,6 +558,7 @@ module.exports = class GocheController {
 		const guild = this.gocheClient.guilds.get(data.d.guild_id);
 		const voiceChannel = new VoiceChannel(
 			data.d,
+			guild,
 			this.gocheLibrary
 		);
 		const channel = new Channel(
@@ -715,6 +714,7 @@ module.exports = class GocheController {
 		const guild = this.gocheClient.guilds.get(data.d.guild_id);
 		const voiceChannel = new VoiceChannel(
 			data.d,
+			guild,
 			this.gocheLibrary
 		);
 		const channel = new Channel(

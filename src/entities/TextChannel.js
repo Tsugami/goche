@@ -1,6 +1,10 @@
 const Channel = require('./Channel');
+const Message = require('./Message');
 
 module.exports = class TextChannel extends Channel {
+    constructor(channel, guild, gocheLibrary) {
+        super(channel, guild, gocheLibrary)
+    }
 	/**
 	 *
 	 * @param {*} messageID Mention the message ID
@@ -81,4 +85,6 @@ module.exports = class TextChannel extends Channel {
 		}
 		return dataMessage;
 	}
+
+	
 };

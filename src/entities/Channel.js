@@ -8,11 +8,14 @@ const type = {
 	4: 'guildCategory',
 	5: 'guildNews',
 	6: 'guildStore',
+	10: 'guildNewsThread',
+	11: 'guildPublicThread',
+	12: 'guildPrivateThread',
 	13: 'guildStageVoice',
 };
 
 module.exports = class Channel {
-	constructor(channel, guild, gocheLibrary = new GocheLibrary()) {
+	constructor(channel, guild, gocheLibrary) {
 		this.type = type[channel.type];
 		this.guild = guild;
 		this.gocheLibrary = gocheLibrary;
@@ -46,6 +49,7 @@ module.exports = class Channel {
 			'delete',
 			`channels/${this.id}/messages`,
 			async (res) => {
+				
 				res.guild = guild;
 				if (res.error === true) {
 					dataMessage = res;

@@ -1,5 +1,4 @@
 const Guild = require('../entities/Guild');
-const SelfUser = require('../entities/SelfUser');
 const GocheLibrary = require('../GocheLibrary');
 const Heartbeart = require('../internal/Heartbeart');
 const WebsocketManager = require('../requests/WebsocketManager');
@@ -12,6 +11,7 @@ module.exports = class GocheClient {
 	 * @GhastClient It is a basis for storing the cache and managing other things. Depending on the profile you are using, some methods may not work because certain profiles may not work if you work with the cache disabled.
 	 */
 	constructor(profile, goche = new GocheLibrary()) {
+		
 		this.profile = profile;
 		this.goche = goche;
 		this.heartbeart = new Heartbeart(this);
@@ -25,14 +25,14 @@ module.exports = class GocheClient {
 		this.guilds = new Map();
 		Object.assign(this.guilds, Guild);
 
-		this.intents = 0;
+		
 		this.wsManager = new WebsocketManager(this);
 		this.intentManager = new IntentsManager();
 		this.cacheManager = new CacheManager();
 		this.ignoreCacheManager = new IgnoreCacheManager();
-		this.shardInt = 0;
+		this.intents = this.intentManager.intents;
 		this.shard = 1;
 		this.selfUser = null;
-		this.uptime = 0;
+		this.uptimeMaster = Date.now();
 	}
 };

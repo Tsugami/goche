@@ -3,7 +3,7 @@ const Guild = require('./Guild');
 const Member = require('./Member');
 
 module.exports = class VoiceChannel extends Channel {
-	constructor(channel, guild = new Guild()) {
+	constructor(channel, guild = new Guild(), gocheLibrary) {
         /**
          * @deprecated @version 0.0.2
 		```
@@ -15,7 +15,7 @@ module.exports = class VoiceChannel extends Channel {
         ```
 		
         */
-		super(channel, guild);
+		super(channel, guild, gocheLibrary);
 		
 
 		this.userLimit = channel.user_limit;

@@ -20,14 +20,5 @@ module.exports = class Member {
 		this.voiceState = null;
 	}
 
-	/**
-     * 
-     * @param {*} options You can provide ban options
-     * @description https://discord.com/developers/docs/resources/guild#ban-object-ban-structure
-     * @CreateBanGuild https://discord.com/developers/docs/resources/guild#create-guild-ban
 
-     */
-	ban(options) {}
-
-	kick(id) {}
 };

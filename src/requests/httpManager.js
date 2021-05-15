@@ -31,6 +31,7 @@ module.exports = class httpManager {
 						}
 					)
 					.then((res) => {
+						caches.delete(res.request)
 						if (
 							res.status ===
 							429
@@ -351,6 +352,7 @@ module.exports = class httpManager {
 						}
 					)
 					.then((res) => {
+						caches.delete(res.request)
 						if (
 							res.status ===
 							429
@@ -511,6 +513,7 @@ module.exports = class httpManager {
 					data
 				)
 					.then((res) => {
+						caches.delete(res.request)
 						if (
 							res.status ===
 							429
@@ -655,11 +658,14 @@ module.exports = class httpManager {
 		}
 	}
 	async postRequest(path, response, data) {
+		const token = axios.CancelToken.source()
 		return axios
 			.post(
 				`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`,
 				data,
+				
 				{
+					cancelToken: token.token,
 					headers: {
 						Authorization: `Bot ${this.gocheLibrary.token}`,
 						'User-Agent':
@@ -672,6 +678,8 @@ module.exports = class httpManager {
 				}
 			)
 			.then((res) => {
+				token.cancel()
+
 				if (res.status === 429) {
 					this.ratelimit.addQueue(
 						new RateLimitBlock(
@@ -807,6 +815,7 @@ module.exports = class httpManager {
 				}
 			)
 			.then((res) => {
+				caches.delete(res.request)
 				if (res.status === 429) {
 					this.ratelimit.addQueue(
 						new RateLimitBlock(
@@ -886,6 +895,7 @@ module.exports = class httpManager {
 				// this.gocheLibrary.gocheClient.heartbeart.requests++
 			})
 			.catch((resError) => {
+				
 				if (resError.status === 200) {
 					/**
 					 * No code ...

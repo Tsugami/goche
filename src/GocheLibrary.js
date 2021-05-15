@@ -6,6 +6,7 @@ const GocheController = require('./hooks/GocheController');
 const SlashManager = require('./action/guild/SlashCommand');
 const Activities = require('./action/user/Activities');
 const RequestControlAction = require('./action/RequestControlAction');
+const IntentsManager = require('./manager/IntentsManager');
 
 module.exports = class GocheLibrary {
 	/**
@@ -28,7 +29,7 @@ module.exports = class GocheLibrary {
 		this.gocheController = new GocheController(this);
 		this.slashManager = new SlashManager(this);
 		this.activities = new Activities().setStatus('online');
-
+		this.intentManager = new IntentsManager()
 		this.requestConfigBuilder = new RequestControlAction().setQueue(
 			5
 		); // Default is 5
@@ -71,7 +72,9 @@ module.exports = class GocheLibrary {
 	 */
 
 	createProfile(mode, ...shardInt) {
-		this.mode = 'profile';
+
+		setTimeout(() => {
+			this.mode = 'profile';
 		if (mode === 'sharding') {
 			if (typeof shardInt[1] === 'number') {
 				if (shardInt[0] > shardInt[1]) {
@@ -79,24 +82,25 @@ module.exports = class GocheLibrary {
 						'You have exceeded the limit on the number of Shards you have set up'
 					);
 				} else {
-					this.client.shardInt =
-						shardInt[0] - 1;
-					this.client.shard =
-						shardInt[1];
+					this.client.shardInt = shardInt[0] - 1;		
+					this.client.shard =	shardInt[1];
+					this.client.wsManager.connect(shardInt[0] - 1, shardInt[1], this.intentManager.intents);
+					return this;
 				}
 			}
 			if (typeof shardInt[0] === 'number') {
 				this.client.shard = shardInt[0];
-				this.client.wsManager.connect();
+				this.client.wsManager.connect(0, shardInt[0], this.intentManager.intents);
 				return this;
 			} else {
 				this.client.shard = 1;
-				this.client.wsManager.connect();
+				this.client.wsManager.connect(0, shardInt[0], this.intentManager.intents);
 				return this;
 			}
 		}
 
-		this.client.wsManager.connect();
+		this.client.wsManager.connect(0, 1, this.intentManager.intents);
+		}, 1 * 1000)
 
 		return this;
 	}
@@ -138,7 +142,7 @@ module.exports = class GocheLibrary {
 		if (typeof intents === 'object') {
 			for (let intent of intents) {
 				if (typeof intent === 'string') {
-					this.client.intentManager.add(
+					this.intentManager.add(
 						intent
 					);
 				}
