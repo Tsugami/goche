@@ -1,4 +1,4 @@
-## Slash Commands
+# Slash Commands
 This folder was created especially for Slash Command. Of course, you will not need to create another WebSocket connection to receive only Slash Command events. You may be wondering ... "Why create a separate folder?" This folder is a higher development and with different classes just so as not to end up getting disorganized. And to get a sense of what you are implementing.
 
 ## Command Manager
