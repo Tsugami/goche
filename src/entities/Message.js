@@ -36,18 +36,19 @@ module.exports = class Message {
 		this.timestamp = Date.parse(message.timestamp) || 0;
 		this.referenced_message = message.referenced_message;
 		this.pinned = message.pinned;
-		this.nonce = message.nonce;
+		this.nonce = message.nonce === undefined ? null : message.nonce;
 		this.mentions = message.mention || [];
 		this.mention_roles = message.mention_roles || [];
 		this.mention_everyone = message.mention_everyone || [];
-		this.member = message.member;
+		this.member = this.guild.members.get(message.author.id);
 		this.flags = message.flags;
 		this.components = message.components;
 		this.channelID = message.channel_id;
 		this.channel = this.guild.channels.get(this.channelID);
 		this.user = new User(message.author);
 		this.attachments = message.attachments;
-		this.messageQueue = new MessageQueue(this);
+	
+		this.messageQueue = new MessageQueue(this, gocheLibrary);
 
 		/**
 		 * Interaction support for Slash Commands. Using type 20 which is a webhook message.

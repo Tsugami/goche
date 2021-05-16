@@ -69,24 +69,22 @@ module.exports = class ModifyRoleAction {
 	}
 
 	async done() {
-		let dataRole;
-
-		await this.gocheClient.goche.requestManager.otherRequest(
-			'patch',
-			`guilds/${this.guild.id}/roles/${this.role.id}`,
-			async (data) => {
-				if (data.error === true) {
-					dataRole = data;
-				} else {
-					dataRole = new Role(
-						data,
-						this.guild
-					);
-				}
-			},
-			this.data
-		);
-
-		return dataRole;
+		return new Promise(promiseResolve => {
+			this.gocheClient.goche.requestManager.otherRequest(
+				'patch',
+				`guilds/${this.guild.id}/roles/${this.role.id}`,
+				async (data) => {
+					if (data.error === true) {
+						throw Error(data);
+					} else {
+						promiseResolve(new Role(
+							data,
+							this.guild
+						));
+					}
+				},
+				this.data
+			)
+		})
 	}
 };

@@ -1,3 +1,4 @@
+const { on } = require('events');
 const Channel = require('./Channel');
 const Message = require('./Message');
 
@@ -38,52 +39,55 @@ module.exports = class TextChannel extends Channel {
 	 * ```
 	 */
 	async sendMessage(content) {
-		let dataMessage = {};
-		if (typeof content === 'object') {
-			const goche = this.gocheLibrary;
-			const guild = this.guild;
-			await this.gocheLibrary.requestManager.postRequest(
-				`channels/${this.id}/messages`,
-				async function (res) {
-					res.guild = guild;
-
-					if (res.error === true) {
-						dataMessage = res;
-					} else {
-						const message = new Message(
-							res.data,
-							guild,
-							goche
-						);
-						dataMessage = message;
+		return new Promise(async resolvePromise => {
+			if (typeof content === 'object') {
+				const goche = this.gocheLibrary;
+				const guild = this.guild;
+				await this.gocheLibrary.requestManager.postRequest(
+					`channels/${this.id}/messages`,
+					async function (res) {
+					
+						res.guild = guild;
+	
+						if (res.error === true) {
+							// dataMessage = res;
+						} else {
+							const message = new Message(
+								res.data,
+								guild,
+								goche
+							);
+							resolvePromise(message)
+						
+						}
+					},
+					content
+				);
+			} else {
+				const goche = this.gocheLibrary;
+				const guild = this.guild;
+				this.gocheLibrary.requestManager.postRequest(
+					`channels/${this.id}/messages`,
+					async (res) => {
+			
+						res.guild = guild;
+						if (res.error === true) {
+						} else {
+							const message = new Message(
+								res,
+								guild,
+								goche
+							);
+							resolvePromise(message)
+							
+						}
+					},
+					{
+						content: content,
 					}
-				},
-				content
-			);
-		} else {
-			const goche = this.gocheLibrary;
-			const guild = this.guild;
-			await this.gocheLibrary.requestManager.postRequest(
-				`channels/${this.id}/messages`,
-				async function (res) {
-					res.guild = guild;
-					if (res.error === true) {
-						dataMessage = res;
-					} else {
-						const message = new Message(
-							res,
-							guild,
-							goche
-						);
-						dataMessage = message;
-					}
-				},
-				{
-					content: content,
-				}
-			);
-		}
-		return dataMessage;
+				);
+			}
+		})
 	}
 
 	

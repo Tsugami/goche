@@ -1,6 +1,5 @@
 const { default: axios } = require('axios');
 const RateLimit = require('../action/RateLimit');
-const RateLimitBlock = require('../action/RateLimitBlock');
 const JSONError = require('../error/JSONError');
 const RequestError = require('../error/RequestError');
 const GocheInfo = require('../GocheInfo');
@@ -12,6 +11,7 @@ module.exports = class httpManager {
 		this.ratelimit = new RateLimit(this.gocheLibrary.requestConfigBuilder, this.gocheLibrary);
 	}
 	async otherRequest(method, path, response, data) {
+	
 		switch (method) {
 			case 'delete':
 				return axios
@@ -32,7 +32,7 @@ module.exports = class httpManager {
 						}
 					)
 					.then((res) => {
-						caches.delete(res.request)
+	
 						if (
 							res.status ===
 							429
@@ -137,6 +137,12 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
+							if (resError.response.status === 429) {
+								/**
+								 * RATE LIMIT
+								 */
+								this.ratelimit.addQueue('delete', resError.response.data.retry_after, method, path, response, data)
+							}
 							if (
 								typeof resError.response ===
 								'object'
@@ -197,16 +203,7 @@ module.exports = class httpManager {
 							res.status ===
 							429
 						) {
-							this.ratelimit.addQueue(
-								new RateLimitBlock(
-									this.otherRequest(
-										method,
-										path,
-										response,
-										data
-									)
-								)
-							);
+							
 							this
 								.gocheLibrary
 								.gocheClient
@@ -297,6 +294,12 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
+							if (resError.response.status === 429) {
+								/**
+								 * RATE LIMIT
+								 */
+								 this.ratelimit.addQueue('patch', resError.response.data.retry_after, method, path, response, data)
+							}
 							if (
 								typeof resError.response ===
 								'object'
@@ -458,6 +461,12 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
+							if (resError.response.status === 429) {
+								/**
+								 * RATE LIMIT
+								 */
+								this.ratelimit.addQueue('put', resError.response.data.retry_after, method, path, response, data)
+							}
 							if (
 								typeof resError.response ===
 								'object'
@@ -619,6 +628,12 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
+							if (resError.response.status === 429) {
+								/**
+								 * RATE LIMIT
+								 */
+								this.ratelimit.addQueue(method, resError.response.data.retry_after, method, path, response, data)
+							}
 							if (
 								typeof resError.response ===
 								'object'
@@ -659,14 +674,14 @@ module.exports = class httpManager {
 		}
 	}
 	async postRequest(path, response, data) {
-		const token = axios.CancelToken.source()
+
+
 		return axios
 			.post(
 				`https://discord.com/api/v${GocheInfo.DISCORD_API}/${path}`,
 				data,
 				
 				{
-					cancelToken: token.token,
 					headers: {
 						Authorization: `Bot ${this.gocheLibrary.token}`,
 						'User-Agent':
@@ -679,18 +694,10 @@ module.exports = class httpManager {
 				}
 			)
 			.then((res) => {
-				token.cancel()
-
+		
 				if (res.status === 429) {
-					this.ratelimit.addQueue(
-						new RateLimitBlock(
-							this.postRequest(
-								path,
-								response,
-								data
-							)
-						)
-					);
+				
+					this.ratelimit.addQueue('post', resError.response.data.retry_after, path, response, data)
 					this.gocheLibrary.gocheClient
 						.heartbeart
 						.ratelimit++;
@@ -756,46 +763,54 @@ module.exports = class httpManager {
 						ratelimit: true,
 					};
 				}
+				return res.data
 				// this.gocheLibrary.gocheClient.heartbeart.requests++
 			})
 			.catch((resError) => {
-				if (resError.status === 200) {
+
+				if (resError.response.status === 429) {
 					/**
-					 * No code ...
+					 * RATE LIMIT
 					 */
+					
+					 this.ratelimit.addQueue('post', resError.response.data.retry_after, path, response, data)
+					 return
 				} else {
-					if (
-						typeof resError.response ===
-						'object'
-					) {
+					if (resError.status === 200) {
+						/**
+						 * No code ...
+						 */
+					} else {
+
 						if (
-							typeof resError
-								.response
-								.data ===
+							typeof resError.response ===
 							'object'
 						) {
+							if (
+								typeof resError
+									.response
+									.data ===
+								'object'
+							) {
+								response({
+									type:
+										'http-external',
+									error: true,
+									errorInfo: 'fail',
+								});
+							}
+						} else {
 							response({
 								type:
 									'http-external',
 								error: true,
-								errorInfo:
-									JSONError[
-										resError
-											.response
-											.data
-											.code
-									],
+								errorInfo: resError,
 							});
 						}
-					} else {
-						response({
-							type:
-								'http-external',
-							error: true,
-							errorInfo: resError,
-						});
 					}
 				}
+	
+				
 			});
 	}
 
@@ -902,6 +917,12 @@ module.exports = class httpManager {
 					 * No code ...
 					 */
 				} else {
+					if (resError.response.status === 429) {
+						/**
+						 * RATE LIMIT
+						 */
+						 this.ratelimit.addQueue('get', resError.response.data.retry_after, path, response, data)
+					}
 					if (
 						typeof resError.response ===
 						'object'

@@ -5,20 +5,48 @@ module.exports = class MessageQueue {
 	 *
 	 * @description This class will improve in the search for methods and also to facilitate the use of requests and to organize the code.
 	 */
-	constructor(message = new Message()) {
+	constructor(message = new Message(), gocheLibrary) {
 		this.message = message;
+		this.gocheLibrary = gocheLibrary;
 	}
 
 	/**
 	 *
 	 * @returns This action can remove messages from the text channel. Remembering that this type of action can return another type of error. When there is no permission needed on the voice channel!
 	 */
-	delete() {
-		this.message.gocheLibrary.requestManager.otherRequest(
-			'delete',
-			`channels/${this.message.channelID}/messages/${this.message.id}`,
-			function response(data) {}
-		);
+	async deleteMessage(time) {
+		const messageQueue = this
+		return new Promise(async resolvePromise => {
+			
+			if (typeof time === 'number') {
+				setTimeout(() => {
+					await this.gocheLibrary.requestManager.otherRequest(
+						'delete',
+						`channels/${this.message.channelID}/messages/${this.message.id}`,
+						function response(data) {
+							if (data.error === true) {
+								resolvePromise(data)
+							} else {   
+								resolvePromise(messageQueue.message)
+							}
+						}
+					);
+				}, time)
+			} else {
+				await this.gocheLibrary.requestManager.otherRequest(
+					'delete',
+					`channels/${this.message.channelID}/messages/${this.message.id}`,
+					function response(data) {
+						if (data.error === true) {
+							resolvePromise(data)
+						} else {   
+							resolvePromise(messageQueue.message)
+						}
+					}
+				);
+			}
+			
+		})
 	}
 
 	/**
@@ -26,46 +54,49 @@ module.exports = class MessageQueue {
 	 * @param {*} content
 	 * @example
 	 * ```
-	 * channel.sendMessage('Hello').messageQueue.edit('test')
+	 * channel.sendMessage('Hello').messageQueue.editMessage('test')
 	 * ```
 	 */
-	async edit(content) {
-		let data = {};
-
-		if (typeof content === 'object') {
-			await this.message.gocheLibrary.requestManager.otherRequest(
-				'patch',
-				`channels/${this.message.channelID}/messages/${this.message.id}`,
-				function response(res) {},
-				{
-					content: content,
-				}
-			);
-			this.message = content;
-		} else {
-			await this.message.gocheLibrary.requestManager.otherRequest(
-				'patch',
-				`channels/${this.message.channelID}/messages/${this.message.id}`,
-				function response(res) {},
-				{
-					content: content,
-				}
-			);
-			this.message = content;
-		}
-
-		return this.message;
+	async editMessage(content) {
+		return new Promise(resolvePromise => {
+			if (typeof content === 'object') {
+				await this.message.gocheLibrary.requestManager.otherRequest(
+					'patch',
+					`channels/${this.message.channelID}/messages/${this.message.id}`,
+					function response(res) {
+						if (res.error === true) {
+							resolvePromise(res)
+						} else {
+							console.log(res)
+							resolvePromise(content)
+						}
+					},
+					{
+						content: content,
+					}
+				);
+				;
+			} else {
+				await this.message.gocheLibrary.requestManager.otherRequest(
+					'patch',
+					`channels/${this.message.channelID}/messages/${this.message.id}`,
+					function response(res) {
+						if (res.error === true) {
+							resolvePromise(res)
+						} else {
+							resolvePromise(res)
+						}
+					},
+					{
+						content: content,
+					}
+				);
+			
+			}
+		})
 	}
 
-	/**
-	 * @description Method was created to delete message
-	 * @param {*} time
-	 * @example
-	 * ```
-	 * channel.sendMessage('Hello').messageQueue.delete()
-	 * ```
-	 */
-	async delete(time) {}
+
 
 	messageReference() {
 		return {

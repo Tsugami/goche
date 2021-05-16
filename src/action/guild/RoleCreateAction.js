@@ -65,35 +65,33 @@ module.exports = class RoleCreateAction {
 	}
 
 	async done() {
-		let dataRole;
-		let yes;
-		if (typeof this.data.name === 'string') {
-			yes = true;
-		} else {
-			return {
-				type: 'roleCreateAction/name',
-				error: true,
-				errorInfo: {
-					message:
-						'Enter a name for this role to create it (done[RoleCreateAction])',
+		return new Promise(promiseResolve => {
+			if (typeof this.data.name === 'string') {
+				yes = true;
+			} else {
+				return {
+					type: 'roleCreateAction/name',
+					error: true,
+					errorInfo: {
+						message:
+							'Enter a name for this role to create it (done[RoleCreateAction])',
+					},
+				};
+			}
+			this.gocheClient.goche.requestManager.postRequest(
+				`guilds/${this.guild.id}/roles`,
+				async (data) => {
+					if (data.error === true) {
+						promiseResolve(data);
+					} else {
+						promiseResolve(new Role(
+							data,
+							this.guild
+						));
+					}
 				},
-			};
-		}
-		await this.gocheClient.goche.requestManager.postRequest(
-			`guilds/${this.guild.id}/roles`,
-			async (data) => {
-				if (data.error === true) {
-					dataRole = data;
-				} else {
-					dataRole = new Role(
-						data,
-						this.guild
-					);
-				}
-			},
-			this.data
-		);
-
-		return dataRole;
+				this.data
+			);
+		})
 	}
 };

@@ -103,36 +103,38 @@ module.exports = class CreateChannelAction {
 	}
 
 	async done() {
-		let yes;
-		if (typeof this.data.name === 'string') {
-			yes = true;
-		} else {
+		return new Promise(async promiseResolve => {
+			let yes;
+			if (typeof this.data.name === 'string') {
+				yes = true;
+			} else {
+				throw Error({
+					type: 'createChannelAction/name',
+					error: true,
+					errorInfo: {
+						message:
+							'Enter a name for this channel to create it (done[CreateChannelAction])',
+					},
+				}) ;
+			}
+			this.gocheClient.goche.requestManager.postRequest(
+				`guilds/${this.guild.id}/channels`,
+				(data) => {
+					if (data.error === true) {
+						throw data;
+					}
+					promiseResolve(this.guild.channels.get(data.id));
+				},
+				this.data
+			);
 			return {
-				type: 'createChannelAction/name',
+				type: 'http/slow',
 				error: true,
 				errorInfo: {
 					message:
-						'Enter a name for this channel to create it (done[CreateChannelAction])',
+						'Probably the request was not made (done[CreateChannelAction])',
 				},
 			};
-		}
-		await this.gocheClient.goche.requestManager.postRequest(
-			`guilds/${this.guild.id}/channels`,
-			(data) => {
-				if (data.error === true) {
-					return data;
-				}
-				return this.guild.channels.get(data.id);
-			},
-			this.data
-		);
-		return {
-			type: 'http/slow',
-			error: true,
-			errorInfo: {
-				message:
-					'Probably the request was not made (done[CreateChannelAction])',
-			},
-		};
+		})
 	}
 };

@@ -34,38 +34,40 @@ module.exports = class AddBanAction {
 		if (this.user === null) {
 			throw Error('You need to inform User to ban.');
 		}
-		const classBan = class BanInfo {
-			constructor(data) {
-				if (data === null) {
-					return;
+		
+		return new Promise(async promiseResolve => {
+			const classBan = class BanInfo {
+				constructor(data) {
+					if (data === null) {
+						return;
+					}
+					this.user = data.user;
+					this.reason = data.reason;
+					this.time = data.time;
 				}
-				this.user = data.user;
-				this.reason = data.reason;
-				this.time = data.time;
-			}
-		};
-		let dataDone = new classBan(null);
-		await this.gocheClient.goche.requestManager.otherRequest(
-			'put',
-			`guilds/${this.guild.id}/bans/${this.user.id}`,
-			async (data) => {
-				if (data.error === true) {
-					dataDone = data;
-					return;
-				}
-
-				dataDone = await new classBan({
-					user: this.user,
+			};
+			let dataDone = new classBan(null);
+			await this.gocheClient.goche.requestManager.otherRequest(
+				'put',
+				`guilds/${this.guild.id}/bans/${this.user.id}`,
+				async (data) => {
+					if (data.error === true) {
+						throw data;
+						return;
+					}
+	
+					promiseResolve(await new classBan({
+						user: this.user,
+						reason: this.reason,
+						time: this.time,
+					}));
+				},
+				{
+					delete_message_days: this
+						.deleteMessageDays,
 					reason: this.reason,
-					time: this.time,
-				});
-			},
-			{
-				delete_message_days: this
-					.deleteMessageDays,
-				reason: this.reason,
-			}
-		);
-		return dataDone;
+				}
+			);
+		});
 	}
 };

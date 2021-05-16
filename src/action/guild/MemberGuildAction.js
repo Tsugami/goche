@@ -83,24 +83,20 @@ module.exports = class MemberGuildAction {
 	}
 
 	async done() {
-		await this.gocheClient.goche.requestManager.otherRequest(
-			'patch',
-			`guilds/${this.guild.id}/members/${this.member.user.id}`,
-			(data) => {
-				if (data.error === true) {
-					return data;
-				}
-				return this.guild.channels.get(data.id);
-			},
-			this.data
-		);
-		return {
-			type: 'http/slow',
-			error: true,
-			errorInfo: {
-				message:
-					'Probably the request was not made (done[MemberGuildAction])',
-			},
-		};
+		return new Promise(promiseResolve => {
+			this.gocheClient.goche.requestManager.otherRequest(
+				'patch',
+				`guilds/${this.guild.id}/members/${this.member.user.id}`,
+				(data) => {
+					if (data.error === true) {
+						throw Error(data);
+					}
+					promiseResolve(this.guild.channels.get(data.id));
+				},
+				this.data
+			);
+		})
+
+
 	}
 };

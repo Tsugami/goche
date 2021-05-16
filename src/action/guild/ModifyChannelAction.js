@@ -29,30 +29,24 @@ module.exports = class ModifyChannelAction {
 	}
 
 	async done() {
-		let dataResolve;
-		await this.gocheClient.goche.requestManager.otherRequest(
-			'patch',
-			`guilds/${this.guild.id}/channels`,
-			(data) => {
-				if (data.error === true) {
-					dataResolve = data;
-				} else {
-					dataResolve = this.guild.channels.get(
-						data.id
-					);
-				}
-
-				return dataResolve;
-			},
-			this.data
-		);
-		return {
-			type: 'http/slow',
-			error: true,
-			errorInfo: {
-				message:
-					'Probably the request was not made',
-			},
-		};
+		return new Promise(promiseResolve => {
+			this.gocheClient.goche.requestManager.otherRequest(
+				'patch',
+				`guilds/${this.guild.id}/channels`,
+				(data) => {
+					if (data.error === true) {
+						throw Error(data);
+					} else {
+						promiseResolve(this.guild.channels.get(
+							data.id
+						));
+						
+					}
+	
+					
+				},
+				this.data
+			);
+		})
 	}
 };
