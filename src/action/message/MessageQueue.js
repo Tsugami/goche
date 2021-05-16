@@ -19,7 +19,7 @@ module.exports = class MessageQueue {
 		return new Promise(async resolvePromise => {
 			
 			if (typeof time === 'number') {
-				setTimeout(() => {
+				setTimeout(async () => {
 					await this.gocheLibrary.requestManager.otherRequest(
 						'delete',
 						`channels/${this.message.channelID}/messages/${this.message.id}`,
@@ -58,7 +58,7 @@ module.exports = class MessageQueue {
 	 * ```
 	 */
 	async editMessage(content) {
-		return new Promise(resolvePromise => {
+		return new Promise(async resolvePromise => {
 			if (typeof content === 'object') {
 				await this.message.gocheLibrary.requestManager.otherRequest(
 					'patch',
@@ -67,7 +67,7 @@ module.exports = class MessageQueue {
 						if (res.error === true) {
 							resolvePromise(res)
 						} else {
-							console.log(res)
+						
 							resolvePromise(content)
 						}
 					},
