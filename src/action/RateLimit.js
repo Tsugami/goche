@@ -1,9 +1,11 @@
+const GocheLibrary = require('../GocheLibrary');
 const RequestControlAction = require('./RequestControlAction');
 
 module.exports = class RateLimit {
-	constructor(requestConfig = new RequestControlAction()) {
+	constructor(requestConfig = new RequestControlAction(), gocheLibrary = new GocheLibrary()) {
 		this.channel = new Map();
 		this.requestConfig = requestConfig;
+		this.gocheLibrary = gocheLibrary;
 		this.otherRequest = [];
 		this.seconds = 1;
 		this.limit = this.requestConfig.queue;
@@ -11,6 +13,8 @@ module.exports = class RateLimit {
 		this.recovery = false;
 		this.setTime = null;
 	}
+
+	
 
 	recoveryOfRequest() {
 		if (this.recovery === false) {

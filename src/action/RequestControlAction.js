@@ -11,7 +11,7 @@ module.exports = class RequestControlAction {
 	 * @returns
 	 * This method will limit the number of requests.
 	 */
-	setQueue(number) {
+	setQueueSize(number) {
 		if (typeof number === 'number') {
 			this.queue = number;
 			return this;

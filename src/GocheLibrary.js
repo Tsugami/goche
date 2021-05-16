@@ -28,9 +28,9 @@ module.exports = class GocheLibrary {
 		this.requestManager = new httpManager(this);
 		this.gocheController = new GocheController(this);
 		this.slashManager = new SlashManager(this);
-		this.activities = new Activities().setStatus('online');
+		this.activities = new Activities();
 		this.intentManager = new IntentsManager()
-		this.requestConfigBuilder = new RequestControlAction().setQueue(
+		this.requestConfigBuilder = new RequestControlAction().setQueueSize(
 			5
 		); // Default is 5
 	}
@@ -258,6 +258,9 @@ module.exports = class GocheLibrary {
 
 	setConfigRequestBuilder(requestConfig = new RequestControlAction()) {
 		if (requestClass instanceof RequestControlAction) {
+			this.requestConfigBuilder = requestConfig
+		} else {
+			throw Error('That does not seem RequestControlAction')
 		}
 	}
 };

@@ -4,6 +4,6 @@ module.exports = class RateLimitBlock {
 		 *
 		 * @returns Start Request Happpyyyy!!!
 		 */
-		this.run = () => request;
+		this.run = (...args) => request;
 	}
 };

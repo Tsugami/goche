@@ -4,11 +4,12 @@ const RateLimitBlock = require('../action/RateLimitBlock');
 const JSONError = require('../error/JSONError');
 const RequestError = require('../error/RequestError');
 const GocheInfo = require('../GocheInfo');
+const GocheLibrary = require('../GocheLibrary');
 
 module.exports = class httpManager {
-	constructor(gocheLibrary) {
+	constructor(gocheLibrary = new GocheLibrary()) {
 		this.gocheLibrary = gocheLibrary;
-		this.ratelimit = new RateLimit();
+		this.ratelimit = new RateLimit(this.gocheLibrary.requestConfigBuilder, this.gocheLibrary);
 	}
 	async otherRequest(method, path, response, data) {
 		switch (method) {
