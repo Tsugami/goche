@@ -3,6 +3,7 @@ module.exports = {
 	 * src
 	 */
 	GocheLibrary: require('./GocheLibrary'),
+	GocheInfo: require('./GocheInfo'),
 
 	/**
 	 * utils

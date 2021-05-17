@@ -56,9 +56,9 @@ module.exports = class Color {
 								color
 						),
 						rgb: {
-							0: hex[0],
-							1: hex[1],
-							2: hex[2],
+							r: hex[0],
+							g: hex[1],
+							b: hex[2],
 						},
 						hex: `#${color.toString(
 							16
@@ -72,9 +72,9 @@ module.exports = class Color {
 						inputType: typeof hex,
 						color: 0,
 						rgb: {
-							0: 0,
-							1: 0,
-							2: 0,
+							r: 0,
+							g: 0,
+							b: 0,
 						},
 						errorInfo: {
 							message:
@@ -105,19 +105,19 @@ module.exports = class Color {
 								color
 						),
 						rgb: {
-							0:
+							r:
 								(Number(
 									color
 								) >>
 									16) &
 								0xff,
-							1:
+							g:
 								(Number(
 									color
 								) >>
 									8) &
 								0xff,
-							2:
+							b:
 								Number(
 									color
 								) &
@@ -134,9 +134,9 @@ module.exports = class Color {
 						inputType: typeof hex,
 						color: 0,
 						rgb: {
-							0: 0,
-							1: 0,
-							2: 0,
+							r: 0,
+							g: 0,
+							b: 0,
 						},
 						errorInfo: {
 							message:
@@ -157,19 +157,19 @@ module.exports = class Color {
 							color
 						),
 						rgb: {
-							0:
+							r:
 								(Number(
 									color
 								) >>
 									16) &
 								0xff,
-							1:
+							g:
 								(Number(
 									color
 								) >>
 									8) &
 								0xff,
-							2:
+							b:
 								Number(
 									color
 								) &
@@ -185,9 +185,9 @@ module.exports = class Color {
 						inputType: typeof hex,
 						color: 0,
 						rgb: {
-							0: 0,
-							1: 0,
-							2: 0,
+							r: 0,
+							g: 0,
+							b: 0,
 						},
 						errorInfo: {
 							message:
@@ -203,9 +203,9 @@ module.exports = class Color {
 					error: true,
 					color: 0,
 					rgb: {
-						0: 0,
-						1: 0,
-						2: 0,
+						r: 0,
+						g: 0,
+						b: 0,
 					},
 					hex: hex,
 					errorInfo: {

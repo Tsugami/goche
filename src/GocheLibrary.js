@@ -36,7 +36,7 @@ module.exports = class GocheLibrary {
 
 	/**
 	 *  @GocheLibrary This method is used to retrieve events and metadata on the fly. They are not stored in a cache.
-	 *
+	 *	@deprecated 
 	 *  @GhocheWarn Includes that you should not be able to search for the methods that are saved in the library's sub cache.
 	 */
 	light() {
