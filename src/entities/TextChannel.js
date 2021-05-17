@@ -69,8 +69,8 @@ module.exports = class TextChannel extends Channel {
 				this.gocheLibrary.requestManager.postRequest(
 					`channels/${this.id}/messages`,
 					async (res) => {
-			
-						res.guild = guild;
+					
+						 res.guild = guild;
 						if (res.error === true) {
 						} else {
 							const message = new Message(
@@ -78,6 +78,7 @@ module.exports = class TextChannel extends Channel {
 								guild,
 								goche
 							);
+						
 							resolvePromise(message)
 							
 						}

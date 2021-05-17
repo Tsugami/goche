@@ -1,10 +1,20 @@
 module.exports = class RequestControlAction {
 	constructor() {
 		this.queue = 5;
+		this.limitQueue = false;
 		this.ignoreRequest = false;
 		this.ignorePath = [];
-		this.warn = false;
 	}
+
+
+	/**
+	 * 
+	 * @param {*} time 
+	 */
+	setTime(time) {
+
+	}
+
 	/**
 	 *
 	 * @param {*} number
@@ -14,6 +24,8 @@ module.exports = class RequestControlAction {
 	setQueueSize(number) {
 		if (typeof number === 'number') {
 			this.queue = number;
+			this.limitQueue = true;
+			
 			return this;
 		}
 		this.queue = 5; // Default

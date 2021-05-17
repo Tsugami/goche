@@ -1,12 +1,12 @@
 const GocheListener = require('./events/listeners/GocheListener');
 const GocheListenerAdapter = require('./events/GocheListenerAdapter');
 const GocheClient = require('./manager/GocheClient');
-const httpManager = require('./requests/httpManager');
 const GocheController = require('./hooks/GocheController');
 const SlashManager = require('./action/guild/SlashCommand');
 const Activities = require('./action/user/Activities');
 const RequestControlAction = require('./action/RequestControlAction');
 const IntentsManager = require('./manager/IntentsManager');
+const HttpAPI = require('./requests/HttpAPI');
 
 module.exports = class GocheLibrary {
 	/**
@@ -22,17 +22,16 @@ module.exports = class GocheLibrary {
 			writable: false,
 			value: token,
 		});
-		this.httpManager = new httpManager(this);
+		this.httpManager = new HttpAPI(this);
 		this.client = new GocheClient(this.mode, this);
 		this.listenerManager = new GocheListenerAdapter(this);
-		this.requestManager = new httpManager(this);
+		this.requestManager = new HttpAPI(this);
 		this.gocheController = new GocheController(this);
 		this.slashManager = new SlashManager(this);
 		this.activities = new Activities();
 		this.intentManager = new IntentsManager()
-		this.requestConfigBuilder = new RequestControlAction().setQueueSize(
-			5
-		); // Default is 5
+		this.requestConfigBuilder = new RequestControlAction()
+
 	}
 
 	/**

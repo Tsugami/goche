@@ -5,6 +5,13 @@ const RequestError = require('../error/RequestError');
 const GocheInfo = require('../GocheInfo');
 const GocheLibrary = require('../GocheLibrary');
 
+/**
+ * # httpManager
+ * This solicitor was discontinued due to the use of excessive memory. Using the Javascript's native library it seems that there was less memory consumption.
+ * @deprecated 
+ * @version 0.0.2
+ * @class HttpAPI Use this class to make requests from now on.
+ */
 module.exports = class httpManager {
 	constructor(gocheLibrary = new GocheLibrary()) {
 		this.gocheLibrary = gocheLibrary;
@@ -137,12 +144,8 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
-							if (resError.response.status === 429) {
-								/**
-								 * RATE LIMIT
-								 */
-								this.ratelimit.addQueue('delete', resError.response.data.retry_after, method, path, response, data)
-							}
+				
+						
 							if (
 								typeof resError.response ===
 								'object'
@@ -153,6 +156,14 @@ module.exports = class httpManager {
 										.data ===
 									'object'
 								) {
+									if (resError.response.status === 429) {
+										/**
+										 * RATE LIMIT
+										 */
+										this.ratelimit.addQueue('delete', resError.response.data.retry_after, method, path, response, data)
+		
+										return
+									}
 									response(
 										{
 											type:
@@ -294,12 +305,8 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
-							if (resError.response.status === 429) {
-								/**
-								 * RATE LIMIT
-								 */
-								 this.ratelimit.addQueue('patch', resError.response.data.retry_after, method, path, response, data)
-							}
+				
+						
 							if (
 								typeof resError.response ===
 								'object'
@@ -310,6 +317,14 @@ module.exports = class httpManager {
 										.data ===
 									'object'
 								) {
+									if (resError.response.status === 429) {
+										/**
+										 * RATE LIMIT
+										 */
+										this.ratelimit.addQueue('patch', resError.response.data.retry_after, method, path, response, data)
+		
+										return
+									}
 									response(
 										{
 											type:
@@ -356,21 +371,13 @@ module.exports = class httpManager {
 						}
 					)
 					.then((res) => {
-						caches.delete(res.request)
+			
 						if (
 							res.status ===
 							429
 						) {
-							this.ratelimit.addQueue(
-								new RateLimitBlock(
-									this.otherRequest(
-										method,
-										path,
-										response,
-										data
-									)
-								)
-							);
+							this.ratelimit.addQueue('put', resError.response.data.retry_after, method, path, response, data)
+	
 							this
 								.gocheLibrary
 								.gocheClient
@@ -461,12 +468,8 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
-							if (resError.response.status === 429) {
-								/**
-								 * RATE LIMIT
-								 */
-								this.ratelimit.addQueue('put', resError.response.data.retry_after, method, path, response, data)
-							}
+				
+						
 							if (
 								typeof resError.response ===
 								'object'
@@ -477,6 +480,14 @@ module.exports = class httpManager {
 										.data ===
 									'object'
 								) {
+									if (resError.response.status === 429) {
+										/**
+										 * RATE LIMIT
+										 */
+										this.ratelimit.addQueue('put', resError.response.data.retry_after, method, path, response, data)
+		
+										return
+									}
 									response(
 										{
 											type:
@@ -523,7 +534,6 @@ module.exports = class httpManager {
 					data
 				)
 					.then((res) => {
-						caches.delete(res.request)
 						if (
 							res.status ===
 							429
@@ -628,12 +638,8 @@ module.exports = class httpManager {
 							 * No code ...
 							 */
 						} else {
-							if (resError.response.status === 429) {
-								/**
-								 * RATE LIMIT
-								 */
-								this.ratelimit.addQueue(method, resError.response.data.retry_after, method, path, response, data)
-							}
+				
+						
 							if (
 								typeof resError.response ===
 								'object'
@@ -644,6 +650,14 @@ module.exports = class httpManager {
 										.data ===
 									'object'
 								) {
+									if (resError.response.status === 429) {
+										/**
+										 * RATE LIMIT
+										 */
+										this.ratelimit.addQueue(method, resError.response.data.retry_after, method, path, response, data)
+		
+										return
+									}
 									response(
 										{
 											type:
@@ -764,50 +778,81 @@ module.exports = class httpManager {
 					};
 				}
 				return res.data
-				// this.gocheLibrary.gocheClient.heartbeart.requests++
 			})
 			.catch((resError) => {
-
-				if (resError.response.status === 429) {
-					/**
-					 * RATE LIMIT
-					 */
+					if (resError.isAxiosError === true) {
+						if (typeof resError.data === 'object') {
+							if (resError.data.message === '404: Not Found') {
+								response({
+									type:
+										'http/jsonerror/statuscode',
+									error: true,
+									errorInfo:
+										JSONError[
+											resError
+												.data
+												.code
+										],
+									ratelimit: true,
+								});
+								return
+							}
+						}
+						
+						
+					}
 					
-					 this.ratelimit.addQueue('post', resError.response.data.retry_after, path, response, data)
-					 return
-				} else {
-					if (resError.status === 200) {
+				if (typeof resError.response === 'object') {
+					if (resError.response.status === 429) {
 						/**
-						 * No code ...
+						 * RATE LIMIT
 						 */
+						
+						 this.ratelimit.addQueue('post', resError.response.data.retry_after, path, response, data)
+						 return
 					} else {
-
-						if (
-							typeof resError.response ===
-							'object'
-						) {
+						if (resError.status === 200) {
+							/**
+							 * No code ...
+							 */
+						} else {
+						
 							if (
-								typeof resError
-									.response
-									.data ===
+								typeof resError.response ===
 								'object'
 							) {
+								if (
+									typeof resError
+										.response
+										.data ===
+									'object'
+								) {
+									if (typeof response === 'function') {
+										response({
+											type:
+												'http-external',
+											error: true,
+											errorInfo: 'fail',
+										});
+									}
+								}
+							} else {
 								response({
 									type:
 										'http-external',
 									error: true,
-									errorInfo: 'fail',
+									errorInfo: resError,
 								});
 							}
-						} else {
-							response({
-								type:
-									'http-external',
-								error: true,
-								errorInfo: resError,
-							});
 						}
 					}
+				} else {
+					response({
+						type:
+							'http-external',
+						error: true,
+						errorInfo: resError,
+					});
 				}
 	
 				
@@ -831,7 +876,6 @@ module.exports = class httpManager {
 				}
 			)
 			.then((res) => {
-				caches.delete(res.request)
 				if (res.status === 429) {
 					this.ratelimit.addQueue(
 						new RateLimitBlock(

@@ -1,4 +1,5 @@
 const Message = require('../../entities/Message');
+const UpdateObject = require('../../tools/UpdateObject');
 
 module.exports = class MessageQueue {
 	/**
@@ -23,7 +24,7 @@ module.exports = class MessageQueue {
 					await this.gocheLibrary.requestManager.otherRequest(
 						'delete',
 						`channels/${this.message.channelID}/messages/${this.message.id}`,
-						function response(data) {
+						(data) => {
 							if (data.error === true) {
 								resolvePromise(data)
 							} else {   
@@ -36,7 +37,7 @@ module.exports = class MessageQueue {
 				await this.gocheLibrary.requestManager.otherRequest(
 					'delete',
 					`channels/${this.message.channelID}/messages/${this.message.id}`,
-					function response(data) {
+					(data) => {
 						if (data.error === true) {
 							resolvePromise(data)
 						} else {   
@@ -57,18 +58,29 @@ module.exports = class MessageQueue {
 	 * channel.sendMessage('Hello').messageQueue.editMessage('test')
 	 * ```
 	 */
-	async editMessage(content) {
+	editMessage(content) {
 		return new Promise(async resolvePromise => {
 			if (typeof content === 'object') {
 				await this.message.gocheLibrary.requestManager.otherRequest(
 					'patch',
 					`channels/${this.message.channelID}/messages/${this.message.id}`,
-					function response(res) {
+					(res) => {
+			
 						if (res.error === true) {
 							resolvePromise(res)
 						} else {
-						
-							resolvePromise(content)
+							new UpdateObject(res, this.message, [
+								'content',
+								'pinned',
+								'mention_everyone',
+								'tts'
+							]).letGo()
+							this.message.edited = Date.parse(res.edited_timestamp)
+							this.message.embeds.map(e => this.message.embeds.pop())
+							res.embeds.map(e => {
+								e.push(e)
+							})
+							resolvePromise(res)
 						}
 					},
 					{
@@ -80,11 +92,23 @@ module.exports = class MessageQueue {
 				await this.message.gocheLibrary.requestManager.otherRequest(
 					'patch',
 					`channels/${this.message.channelID}/messages/${this.message.id}`,
-					function response(res) {
+					(res) => {
+		
 						if (res.error === true) {
 							resolvePromise(res)
 						} else {
-							resolvePromise(res)
+							new UpdateObject(res, this.message, [
+								'content',
+								'pinned',
+								'mention_everyone',
+								'tts'
+							]).letGo()
+							this.message.edited = Date.parse(res.edited_timestamp)
+							this.message.embeds.map(e => this.message.embeds.pop())
+							res.embeds.map(e => {
+								e.push(e)
+							})
+							resolvePromise(this.message)
 						}
 					},
 					{
@@ -98,13 +122,5 @@ module.exports = class MessageQueue {
 
 
 
-	messageReference() {
-		return {
-			messageReference: class MessageReference {
-				constructor(messageID, mention) {
-					this.mention;
-				}
-			},
-		};
-	}
+	
 };
