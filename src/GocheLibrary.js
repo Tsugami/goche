@@ -55,7 +55,7 @@ module.exports = class GocheLibrary {
 	 * ```
 	 * ### **Sharding**
 	 *
-	 * @param {*} mode Defines the way the profile wants you to work
+	 * @param {string<sharding>} mode Defines the way the profile wants you to work
 	 * @param {...any} shardInt Defines the list of shards you want to work on.
 	 *
 	 *
@@ -166,8 +166,8 @@ module.exports = class GocheLibrary {
 	 *       'applicationCommandUpdate',
 	 *       'applicationCommandDelete',
 	 *       'channelCreate',
-	 *       'channelCreate',
-	 *       'channelCreate',
+	 *       'channelUpdate',
+	 *       'channelDelete',
 	 *       'channelPinsUpdate',
 	 *       'threadCreate',
 	 *       'threadUpdate',

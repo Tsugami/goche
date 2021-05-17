@@ -22,9 +22,10 @@ module.exports = class GocheClient {
 			writable: false,
 			value: this.goche.token,
 		});
-		this.guilds = new Map();
-		Object.assign(this.guilds, Guild);
 
+
+		this.guilds = new Map();
+		this.users = new Map();
 		
 		this.wsManager = new WebsocketManager(this);
 		this.intentManager = new IntentsManager();
