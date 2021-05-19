@@ -24,7 +24,8 @@ module.exports = class Message {
 		guild = new Guild(),
 		gocheLibrary = new GocheLibrary()
 	) {
-	
+
+		
 		this.gocheLibrary = gocheLibrary;
 		this.reactions = [];
 		this.guild = guild;

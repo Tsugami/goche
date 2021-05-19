@@ -46,12 +46,10 @@ module.exports = class TextChannel extends Channel {
 				await this.gocheLibrary.requestManager.postRequest(
 					`channels/${this.id}/messages`,
 					async function (res) {
-					
-						res.guild = guild;
-	
-						if (res.error === true) {
-							// dataMessage = res;
+						if (res.data.error === true) {
+							resolvePromise(res)
 						} else {
+							res.guild = guild;
 							const message = new Message(
 								res.data,
 								guild,

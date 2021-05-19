@@ -32,6 +32,17 @@ module.exports = class HttpAPI {
                                 }
                                 res.data.error = false;
                             }
+
+                            if (typeof res.data.code === 'number') {
+                                res.data.error = true;
+                                response({
+                                    errorCode: 'http/statuscode',
+                                    data: res.data
+                                })
+                                return
+                            }
+
+
                             response(res.data)
                         }
                     }
@@ -55,6 +66,17 @@ module.exports = class HttpAPI {
                                 }
                                 res.data.error = false;
                             }
+
+                            if (typeof res.data.code === 'number') {
+                                res.data.error = true;
+                                response({
+                                    errorCode: 'http/statuscode',
+                                    data: res.data
+                                })
+                                return
+                            }
+
+
                             response(res.data)
                         }
                     }
@@ -77,6 +99,17 @@ module.exports = class HttpAPI {
                                     this.ratelimit.rateLimiteGlobal()
                                     return
                                 }
+
+                                if (typeof res.data.code === 'number') {
+                                    res.data.error = true;
+                                    response({
+                                        errorCode: 'http/statuscode',
+                                        data: res.data
+                                    })
+                                    return
+                                }
+
+
                                 res.data.error = false;
                             }
                             response(res.data)
@@ -99,6 +132,7 @@ module.exports = class HttpAPI {
                 this.ratelimit.addQueue('post', res.data.retry_after, path, response, data)
             } else {
                 if (typeof response === 'function') {
+                   
                     if (typeof res.data === 'object') {
                         if (res.data.messsage === 'You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently. Please read our docs at https://discord.com/developers/docs/topics/rate-limits to prevent this moving forward.') {
                             this.ratelimit.rateLimiteGlobal()
@@ -106,6 +140,16 @@ module.exports = class HttpAPI {
                         }
                         res.data.error = false;
                     }
+
+                    if (typeof res.data.code === 'number') {
+                        res.data.error = true;
+                        response({
+                            errorCode: 'http/statuscode',
+                            data: res.data
+                        })
+                        return
+                    }
+                
                     response(res.data)
                 }
             }
@@ -128,6 +172,16 @@ module.exports = class HttpAPI {
                             this.ratelimit.rateLimiteGlobal()
                             return
                         }
+
+                        if (typeof res.data.code === 'number') {
+                            res.data.error = true;
+                            response({
+                                errorCode: 'http/statuscode',
+                                data: res.data
+                            })
+                            return
+                        }
+
                         res.data.error = false;
                     }
                     response(res.data)
