@@ -62,6 +62,12 @@ module.exports = class TextChannel extends Channel {
 					content
 				);
 			} else {
+				if (content.length > 2000) {
+					throw Error(`Maximum letters are 2000. There are {${content.length}} letters`)
+				}
+				if (content.length >= 0 && content.length === ' ') {
+					throw Error('That message is empty')
+				}
 				const goche = this.gocheLibrary;
 				const guild = this.guild;
 				this.gocheLibrary.requestManager.postRequest(
