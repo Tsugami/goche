@@ -139,18 +139,29 @@ module.exports = class HttpAPI {
                             this.ratelimit.rateLimiteGlobal()
                             return
                         }
+                        res.error = false;
                         res.data.error = false;
                     }
 
                     if (typeof res.data.code === 'number') {
-                        res.data.error = true;
+                        res.error = true;
+                     
+                        const dataError = typeof res.data === 'undefined' ? res : res.data;
+
+                         
+                        const errorInfo = JSONError[dataError.code];
+
                         response({
                             errorCode: 'http/statuscode',
-                            data: res.data
+                            data: {
+                                api: errorInfo,
+                                error: true
+                            }
                         })
                         return
                     }
 
+                    res.error = false;
                     res.data.error = false;
                     response(res.data)
                 }
