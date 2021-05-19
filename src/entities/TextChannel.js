@@ -41,14 +41,24 @@ module.exports = class TextChannel extends Channel {
 	async sendMessage(content) {
 		return new Promise(async resolvePromise => {
 			if (typeof content === 'object') {
+				if (typeof content.content === 'string') {
+					if (content.content.length > 2000) {
+						throw Error(`Maximum letters are 2000. There are {${content.content.length}} letters`)
+					}
+					if (content.content.length >= 0 && content.content.length === ' ') {
+						throw Error('That message is empty')
+					}
+				}
 				const goche = this.gocheLibrary;
 				const guild = this.guild;
 				await this.gocheLibrary.requestManager.postRequest(
 					`channels/${this.id}/messages`,
 					async function (res) {
-						if (res.data.error === true) {
+						
+						if (res.error === true) {
 							resolvePromise(res)
 						} else {
+							
 							res.guild = guild;
 							const message = new Message(
 								res,
