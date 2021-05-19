@@ -1,3 +1,4 @@
+const ObjectManager = require('../tools/ObjectManager');
 const Channel = require('./Channel');
 const Guild = require('./Guild');
 const Member = require('./Member');
@@ -25,6 +26,6 @@ module.exports = class VoiceChannel extends Channel {
 				? 'auto'
 				: channel.rtc_region;
 		this.permissionOverwrites = channel.permission_overwrites;
-		this.members = new Map();
+		this.members = new ObjectManager();
 	}
 };

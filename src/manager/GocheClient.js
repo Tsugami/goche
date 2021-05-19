@@ -2,6 +2,7 @@ const Guild = require('../entities/Guild');
 const GocheLibrary = require('../GocheLibrary');
 const Heartbeart = require('../internal/Heartbeart');
 const WebsocketManager = require('../requests/WebsocketManager');
+const ObjectManager = require('../tools/ObjectManager');
 const CacheManager = require('./CacheManager');
 const IgnoreCacheManager = require('./IgnoreCacheManager');
 const IntentsManager = require('./IntentsManager');
@@ -24,8 +25,8 @@ module.exports = class GocheClient {
 		});
 
 
-		this.guilds = new Map();
-		this.users = new Map();
+		this.guilds = new ObjectManager();
+		this.users = new ObjectManager();
 		
 		this.wsManager = new WebsocketManager(this);
 		this.intentManager = new IntentsManager();

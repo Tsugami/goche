@@ -85,7 +85,7 @@ module.exports = class TextChannel extends Channel {
 					async (res) => {
 					
 						 res.guild = guild;
-
+							
 						if (res.error === true) {
 							resolvePromise(res)
 						} else {
