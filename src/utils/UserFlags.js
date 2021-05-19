@@ -12,4 +12,5 @@ module.exports = {
 	teamUser: 1 << 10,
 	verifiedBot: 1 << 16,
 	earlyVerifiedBotDeveloper: 1 << 17,
+	discordCertifiedModerator: 1 << 18
 };
