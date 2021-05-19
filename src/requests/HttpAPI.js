@@ -42,7 +42,7 @@ module.exports = class HttpAPI {
                                 return
                             }
 
-
+                            res.data.error = true;
                             response(res.data)
                         }
                     }
@@ -76,7 +76,7 @@ module.exports = class HttpAPI {
                                 return
                             }
 
-
+                            res.data.error = true;
                             response(res.data)
                         }
                     }
@@ -112,6 +112,7 @@ module.exports = class HttpAPI {
 
                                 res.data.error = false;
                             }
+                            res.data.error = true;
                             response(res.data)
                         }
                     }
@@ -149,7 +150,8 @@ module.exports = class HttpAPI {
                         })
                         return
                     }
-                
+
+                    res.data.error = true;
                     response(res.data)
                 }
             }
@@ -184,6 +186,7 @@ module.exports = class HttpAPI {
 
                         res.data.error = false;
                     }
+                    res.data.error = true;
                     response(res.data)
                 }
             }
