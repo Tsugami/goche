@@ -69,16 +69,17 @@ module.exports = class TextChannel extends Channel {
 					async (res) => {
 					
 						 res.guild = guild;
-						if (res.error === true) {
+						 if (res.data.error === true) {
+							resolvePromise(res)
 						} else {
+							res.guild = guild;
 							const message = new Message(
-								res,
+								res.data,
 								guild,
 								goche
 							);
-						
 							resolvePromise(message)
-							
+						
 						}
 					},
 					{
