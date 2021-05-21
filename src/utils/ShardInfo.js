@@ -5,6 +5,10 @@ module.exports = class ShardInfo {
     constructor(shardID, websocketManager) {
         this.shardID = shardID
         this.wsManager = websocketManager
+        this.problemNetwork = false;
+		this.timeReconnect = 0;
+        this.lantecy = 0;
+        this.failToConnect = 0
         this.failed = 0
         this.ready = false
         this.connected = 0
@@ -37,5 +41,19 @@ module.exports = class ShardInfo {
          */
         this.status = 'STARTING_SHARD'
 
+    }
+
+
+    restart() {
+
+    }
+
+
+    shutdown() {
+
+    }
+
+    absence() {
+        
     }
 }

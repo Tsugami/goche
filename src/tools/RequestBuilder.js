@@ -1,10 +1,12 @@
 const GocheInfo = require("../GocheInfo")
 const httpCreate = require('https')
-const url = require('url')
+const url = require('url');
+const DataBytes = require("../utils/DataBytes");
 
 module.exports = class RequestBuilder {
-    constructor(method, path, headers, data) {
-        this.url = GocheInfo.DISCORD_URL
+    constructor(method, path, headers, data, gocheLibrary) {
+        this.gocheLibrary = gocheLibrary;
+        this.url = GocheInfo.DISCORD_URL;
         this.method = `${method}`.toLocaleUpperCase();
         this.path = `${`/api/v${GocheInfo.DISCORD_API}/${encodeURIComponent(path)}`}`;
  
@@ -58,6 +60,11 @@ module.exports = class RequestBuilder {
                         this.endLoading = Date.now()
                         try {
                         this.type = 'json'
+                            try {
+                                this.gocheLibrary.dataAPI += new DataBytes(JSON.parse(Buffer.from(bufferDataArray).toString())).start().bytes
+                            } catch (ignore) {
+                                
+                            }
                         resolvePromise({
                             statusCode: res.statusCode,
                             data: JSON.parse(Buffer.from(bufferDataArray).toString())

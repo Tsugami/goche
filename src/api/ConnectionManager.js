@@ -3,6 +3,7 @@ const GocheInfo = require('../GocheInfo');
 const WebSocket = require('ws');
 const GatewayError = require('../error/GatewayError');
 const DebugSharding = require('../utils/DebugSharding');
+const DataBytes = require('../utils/DataBytes');
 
 module.exports = class ConnectionManager {
 	constructor(websocketManager = new WebsocketManager(), shardID, intents) {
@@ -12,6 +13,8 @@ module.exports = class ConnectionManager {
 		this.websocketManager = websocketManager;
 		this.shardID = shardID;
 		this.uptime = Date.now();
+		this.timeClosed = false;
+		this.tryReconnect = false;
 		this.ping = 0;
 		this.seq = 0;
 		this.data = {
@@ -28,6 +31,9 @@ module.exports = class ConnectionManager {
 	}
 
 	updateStatusShard(status) {
+		if (typeof status === 'undefined') {
+			return;
+		}
 		this.debug('debug', this)
 		this.websocketManager.shardsInfo.shardsMap.get(this.shardID).status = status
 		this.websocketManager.shardsInfo.shardsArray[this.shardID].status = status
@@ -50,20 +56,33 @@ module.exports = class ConnectionManager {
 	}
 
 	connecting() {
-		this.websocketManager.connectionList.delete(this.shardID);
-		const shard = new ConnectionManager(
-			this.websocketManager,
-			this.shardID,
-			this.intents
-		)
-		this.websocketManager.connectionList.set(
-			this.shardID,
-			shard
-			
-		);
-		shard.connect('sharding');
-		this.debug('connecting', this)
-		this.updateStatusShard('CONNECTING')
+		if (this.tryReconnect === false) {
+			this.tryReconnect = true;
+			setTimeout(() => {
+				this.websocketManager.connectionList.delete(this.shardID);
+				const shard = new ConnectionManager(
+					this.websocketManager,
+					this.shardID,
+					this.intents
+				)
+				this.websocketManager.connectionList.set(
+					this.shardID,
+					shard
+					
+				);
+				if (this.ws.readyState === 0) {
+					this.ws.close()
+				}
+				
+				shard.connect('sharding');
+				this.debug('connecting', this)
+				this.updateStatusShard('CONNECTING')
+				this.noConnection()
+			}, this.gocheClient.wsManager.shardsInfo.shardsArray[this.shardID].timeReconnect)
+		} else {
+			this.tryReconnect = false;
+		}
+	
 		
 	}
 
@@ -75,7 +94,11 @@ module.exports = class ConnectionManager {
 			? false
 			: true), this.updateStatusShard('OPEN'));
 		this.ws.on('error', (err) => {
-			
+			switch (err.syscall) {
+				case 'getaddrinfo':
+					this.updateStatusShard('RESOLVE_DNS_DISCORD')
+					break;
+			}
 			switch (err.stack.code) {
 				case 'ETIMEDOUT':
 					console.error(
@@ -90,6 +113,8 @@ module.exports = class ConnectionManager {
 					.map((eventClass) =>
 						eventClass.on(this)
 					);
+					this.noConnection()
+			
 					this.debug('error', {
 						message: 'There was a network connection failure and therefore it was not possible to connect to Discord',
 						code: 'ETIMEDOUT'
@@ -98,7 +123,7 @@ module.exports = class ConnectionManager {
 					break;
 				default: 
 				this.debug('error', {
-					message: `${e.message}`,
+					message: `${err.message}`,
 					code: err.stack.code
 				})
 				this.updateStatusShard(err.stack.code)
@@ -153,6 +178,7 @@ module.exports = class ConnectionManager {
 		this.ws.on('message', async (message) => {
 		
 			let data = JSON.parse(message);
+			this.updateStats(data)
 			if (typeof data.t === 'string') {
 				switch (data.t) {
 					case 'READY':
@@ -243,6 +269,34 @@ module.exports = class ConnectionManager {
 		});
 		return this;
 	}
+
+
+	noConnection() {
+		this.updateStatusShard('RESOLVE_DNS_DISCORD')
+		if (this.gocheClient.wsManager.shardsInfo.shardsMap.get(this.shardID).timeReconnect >= 25 * 1000) {
+			this.timeClosed = true;
+		} else {
+			this.timeClosed = false;
+			this.gocheClient.wsManager.shardsInfo.shardsMap.get(this.shardID).problemNetwork = true
+			this.gocheClient.wsManager.shardsInfo.shardsMap.get(this.shardID).timeReconnect += 5 * 1000
+	
+			this.gocheClient.wsManager.shardsInfo.shardsArray[this.shardID].problemNetwork = true
+			this.gocheClient.wsManager.shardsInfo.shardsArray[this.shardID].timeReconnect += 5 * 1000
+		}
+	
+
+
+	}
+
+
+
+	updateStats(data) {
+		const newStats = new DataBytes(data).start()
+
+		this.gocheClient.goche.dataManager.wsData+=newStats.bytes
+	}
+
+
 	connect(type) {
 		this.updateStatusShard('CONNECTING')
 		this.ws = new WebSocket(

@@ -12,6 +12,8 @@ const MemberState = require('../entities/MemberState');
 const Interaction = require('../entities/Interaction');
 const Role = require('../entities/Role');
 const TextChannel = require('../entities/TextChannel');
+const ReactionAddEvent = require('../class/ReactionAddEvent');
+const ReactionRemoveEvent = require('../class/ReactionRemoveEvent');
 
 module.exports = class GocheController {
 	constructor(gocheLibrary = new GocheLibrary()) {
@@ -104,15 +106,23 @@ module.exports = class GocheController {
 						}
 						break;
 					case 'GUILD_MEMBER_ADD':
+						this.guildMemberAddEvent(data);
 						this.guildMemberAdd(
 							data
 						);
 						break;
 					case 'GUILD_MEMBER_REMOVE':
+						this.guildMemberRemoveEvent(data);
 						this.guildMemberRemove(
 							data
 						);
 						break;
+					case 'MESSAGE_REACTION_ADD':
+						this.guildAddReactionEvent(data);
+					break;
+					case 'MESSAGE_REACTION_REMOVE':
+						this.guildRemoveReactionEvent(data);
+					break;
 					case 'GUILD_CREATE':
 						this.guildCreate(
 							data
@@ -140,14 +150,63 @@ module.exports = class GocheController {
 						);
 						break;
 					default:
-					case 'INTERACTION_CREATE':
-						this.intereactionCreate(
-							data
-						);
-						break;
+
 				}
 				break;
 		}
+	}
+
+	async guildRemoveReactionEvent(data) {
+		const guild = this.gocheClient.guilds.get(data.d.guild_id)
+		await this.gocheClient.goche.listenerManager.listeners
+		.filter(
+			(eventClass) =>
+				eventClass.eventName ===
+				data.t
+		)
+		.map((eventClass) =>
+			eventClass.on(new ReactionRemoveEvent(data.d, guild))
+		);
+	}
+
+
+	async guildAddReactionEvent(data) {
+		const guild = this.gocheClient.guilds.get(data.d.guild_id)
+		await this.gocheClient.goche.listenerManager.listeners
+		.filter(
+			(eventClass) =>
+				eventClass.eventName ===
+				data.t
+		)
+		.map((eventClass) =>
+			eventClass.on(new ReactionAddEvent(data.d, guild))
+		);
+	}
+
+	async guildMemberAddEvent(data) {
+	
+		await this.gocheClient.goche.listenerManager.listeners
+		.filter(
+			(eventClass) =>
+				eventClass.eventName ===
+				data.t
+		)
+		.map((eventClass) =>
+			eventClass.on(new Member(data.d, null))
+		);
+	}
+
+
+	async guildMemberRemoveEvent(data) {
+		await this.gocheClient.goche.listenerManager.listeners
+		.filter(
+			(eventClass) =>
+				eventClass.eventName ===
+				data.t
+		)
+		.map((eventClass) =>
+			eventClass.on(new Member(data.d, null))
+		);
 	}
 
 	async guildRoleDelete(data) {

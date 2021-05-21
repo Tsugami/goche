@@ -19,6 +19,7 @@ module.exports = {
 	guildBanRemove: 'GUILD_BAN_REMOVE',
 	guildEmojisUpdate: 'GUILD_EMOJIS_UPDATE',
 	guildMemberAdd: 'GUILD_MEMBER_ADD',
+	guildMemberRemove: 'GUILD_MEMBER_REMOVE',
 	guildMemberUpdate: 'GUILD_MEMBER_UPDATE',
 	guildMembersChunk: 'GUILD_MEMBERS_CHUNK',
 	guildRoleCreate: 'GUILD_ROLE_CREATE',

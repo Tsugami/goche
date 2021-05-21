@@ -7,6 +7,7 @@ const Activities = require('./action/user/Activities');
 const RequestControlAction = require('./action/RequestControlAction');
 const IntentsManager = require('./manager/IntentsManager');
 const HttpAPI = require('./requests/HttpAPI');
+const DataManager = require('./utils/DataManager');
 
 module.exports = class GocheLibrary {
 	/**
@@ -29,8 +30,9 @@ module.exports = class GocheLibrary {
 		this.gocheController = new GocheController(this);
 		this.slashManager = new SlashManager(this);
 		this.activities = new Activities();
-		this.intentManager = new IntentsManager()
-		this.requestConfigBuilder = new RequestControlAction()
+		this.intentManager = new IntentsManager();
+		this.dataManager = new DataManager();
+		this.requestConfigBuilder = new RequestControlAction();
 
 	}
 
