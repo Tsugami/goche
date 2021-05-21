@@ -2,6 +2,7 @@ declare module 'goche' {
 
 
 	export abstract class ObjectManager<K, R> extends Map {
+		get(key: any) : R
 		toArray() : Array<R>
 	}
 
@@ -379,7 +380,56 @@ declare module 'goche' {
 		mention: string
 		tag: string
 	}
-	export class Guild {}
+	export class Guild {
+		id: string
+		name: string
+		description: string
+		icon: string
+		splash: string
+		discoverySplash: string
+		owner: Member;
+		ownerID: string;
+		afkChannel: VoiceChannel;
+		afkTimeout: number;
+		explicitContentFilter: number;
+		features: Array<string>
+		joinedAt: number
+		large: boolean
+		unavailable: boolean
+		membersCount: number
+		voiceStates: Array<VoiceChannel>
+		shardID: number
+		roles: ObjectManager<string, Role>
+		roleManager: ObjectManager<string, Member>
+		emojis: ObjectManager<string, EmojiInfo>
+		members: ObjectManager<string, Member>
+		channels: ObjectManager<string, Channel>
+		category: ObjectManager<string, Channel>
+		voiceChannels: ObjectManager<string, VoiceChannel>
+		presences: Array<PresenceMember>
+
+		fetchUser(user: string) : User
+		fetchBans(user: string) : BanInfo
+		fetchUserBan(id: string) : BanInfo
+		ban(member: Member, delDays: number): AddBanAction
+		removeBan(member: Member): BanInfo
+		
+	}
+
+
+	export class AddBanAction {
+
+	}
+	export class Role {
+
+	}
+	export class PresenceMember {
+
+	}
+
+	export class EmojiInfo {
+
+	}
 
 	export class WebsocketManager {
 		constructor(gocheClient: GocheClient)
