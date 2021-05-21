@@ -21,7 +21,6 @@ module.exports = class Channel {
 		this.gocheLibrary = gocheLibrary;
 		this.channel = channel;
 		this.id = channel.id;
-		this.type = type[this.channel.type];
 		this.position = this.channel.position;
 		this.permissionOverwrites = this.channel.permission_overwrites;
 		this.name = this.channel.name;

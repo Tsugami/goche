@@ -36,12 +36,5 @@ module.exports = class User {
 		this.avatar = user.avatar || '';
 		this.mention = `<@!${user.id}>` || '';
 		this.tag = `${user.username}#${user.discriminator}` || '';
-		this.isCache = false;
-		this.deletedCache = false;
 	}
-
-	/**
-	 *
-	 */
-	deleteFromCache() {}
 };

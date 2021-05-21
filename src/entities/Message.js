@@ -39,7 +39,7 @@ module.exports = class Message {
 		this.tts = message.tts || false;
 		this.timestamp = Date.parse(message.timestamp) || 0;
 		this.edited = message.edited_timestamp || 0;
-		this.referenced_message = message.referenced_message;
+		this.referencedMessage = message.referenced_message;
 		this.embeds = message.embeds || []
 		this.pinned = message.pinned;
 		this.nonce = message.nonce === undefined ? null : message.nonce;
