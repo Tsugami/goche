@@ -1,6 +1,18 @@
 # 💻 Goche
 This library was developed for API Discord that provides options and ways to work with ease. I am setting up this project just for the sake of resources for my projects. The library is free and publishes so that everyone can use it. Read the license before using it again. This is important.
 
+## Installation
+**Github**
+To install from Github, you need to install [Git] (https://git-scm.com/)
+
+`Install`:
+```command
+npm install NavyCake/goche#branch --save
+```
+
+**NPM**
+Goche is in development for now, there is no support for NPM.
+
 ## Features
 - You can extend the event class. 🔥
 - Request Marker and Events received / sent by Websocket are marked. 👌
@@ -11,6 +23,7 @@ This library was developed for API Discord that provides options and ways to wor
 - Soon Goche will provide a personalized profile to have memory control.
 - Have control in the cache
 - 📦 Support for Goche-Cli (Custom and prepared Logger) [Click here](https://github.com/NavyCake/goche-cli)
+- Support Typescript
 
 
 ## How does the library work?
