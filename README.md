@@ -3,7 +3,7 @@ This library was developed for API Discord that provides options and ways to wor
 
 ## Installation
 **Github**
-To install from Github, you need to install [Git] (https://git-scm.com/)
+To install from Github, you need to install [Git](https://git-scm.com/)
 
 `Install`:
 ```command
