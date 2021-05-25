@@ -23,6 +23,7 @@ Goche is in development for now, there is no support for NPM.
 - Soon Goche will provide a personalized profile to have memory control.
 - Have control in the cache
 - 📦 Support for Goche-Cli (Custom and prepared Logger) [Click here](https://github.com/NavyCake/goche-cli)
+- ♾️ An API developed in Go that can manage requests and return to function.
 - Support Typescript
 
 
