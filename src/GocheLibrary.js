@@ -8,6 +8,7 @@ const RequestControlAction = require('./action/RequestControlAction');
 const IntentsManager = require('./manager/IntentsManager');
 const HttpAPI = require('./requests/HttpAPI');
 const DataManager = require('./utils/DataManager');
+const GochePacketManager = require('./support/requestBuilder/GochePacketManager');
 
 module.exports = class GocheLibrary {
 	/**
@@ -33,6 +34,7 @@ module.exports = class GocheLibrary {
 		this.intentManager = new IntentsManager();
 		this.dataManager = new DataManager();
 		this.requestConfigBuilder = new RequestControlAction();
+		this.gockePackageManager = null;
 
 	}
 
@@ -257,8 +259,17 @@ module.exports = class GocheLibrary {
 		}
 	}
 
+	setConfigModeRequest(requestConfig = new GochePacketManager()) {
+		if (requestConfig instanceof GochePacketManager) {
+			this.gockePackageManager = requestConfig
+			this.requestConfigBuilder.mode = 'requestGO'
+		} else {
+			throw Error('That does not seem RequestControlAction')
+		}
+	}
+
 	setConfigRequestBuilder(requestConfig = new RequestControlAction()) {
-		if (requestClass instanceof RequestControlAction) {
+		if (requestConfig instanceof RequestControlAction) {
 			this.requestConfigBuilder = requestConfig
 		} else {
 			throw Error('That does not seem RequestControlAction')
