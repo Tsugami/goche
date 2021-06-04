@@ -6,7 +6,7 @@ const GocheInfo = require('../GocheInfo');
 const GocheLibrary = require('../GocheLibrary');
 
 /**
- * # httpManager
+ * ### httpManager
  * This solicitor was discontinued due to the use of excessive memory. Using the Javascript's native library it seems that there was less memory consumption.
  * @deprecated 
  * @version 0.0.2
@@ -29,7 +29,7 @@ module.exports = class httpManager {
 							headers: {
 								Authorization: `Bot ${this.gocheLibrary.token}`,
 								'User-Agent':
-									'Discord Bot (https://github.com/NavyCake/Goche, 0.0.1)',
+									'Discord Bot (Goche, 0.0.1)',
 								'Content-Type':
 									'application/json',
 								'X-RateLimit-Precision':

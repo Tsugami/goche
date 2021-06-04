@@ -3,8 +3,9 @@ const httpCreate = require('https')
 const url = require('url');
 const DataBytes = require("../utils/DataBytes");
 
+
 module.exports = class RequestBuilder {
-    constructor(method, path, headers, data, gocheLibrary) {
+    constructor(method, path, headers, data, gocheLibrary ) {
         this.gocheLibrary = gocheLibrary;
         this.url = GocheInfo.DISCORD_URL;
         this.method = `${method}`.toLocaleUpperCase();
@@ -18,6 +19,7 @@ module.exports = class RequestBuilder {
         this.type = 'unknown';
         this.endLoading = 0;
         this.end = false;
+    
     }
 
     /**
@@ -27,62 +29,80 @@ module.exports = class RequestBuilder {
      * @returns 
      */
     builder(data) {
+       
         const isObject = typeof data === 'object' ? 'isObject' : 'notIsObject'
         return new Promise(resolvePromise => {
-            try {    
-                const requestNew = httpCreate.request({
-                    host: this.url,
-                    path: this.path,
-                    headers: this.headers,
-                    method: this.method,
-                }, res => {
-                    const bufferDataArray = []
-                    res.on('data', (bufferData) => {
-                        const bufferMap = bufferData.toJSON().data
-                        bufferMap.map(e => {
-                            bufferDataArray.push(e)
-                        })          
-                    })
-
-                    res.on('error', (error) => {
-                        res.removeAllListeners()
-                        throw error;
-                    })
-
-                    res.on('close', () => {
-                        res.removeAllListeners()
-                        this.closed = true
-                    })
-
-                    res.on('end', () => {
-                        res.removeAllListeners()
-                        this.end = true
-                        this.endLoading = Date.now()
-                        try {
-                        this.type = 'json'
-                            try {
-                                this.gocheLibrary.dataAPI += new DataBytes(JSON.parse(Buffer.from(bufferDataArray).toString())).start().bytes
-                            } catch (ignore) {
-                                
-                            }
-                        resolvePromise({
-                            statusCode: res.statusCode,
-                            data: JSON.parse(Buffer.from(bufferDataArray).toString())
-                        })
-                        bufferDataArray.map(e => bufferDataArray.pop())
-                        } catch (ThisisnotJSON) {
-                        resolvePromise({
-                            statusCode: res.statusCode,
-                            data: Buffer.from(bufferDataArray).toString()
-                        })
-                        bufferDataArray.map(e => bufferDataArray.pop())
-                        }
-                    })
+            if (this.gocheLibrary.requestConfigBuilder.mode === 'requestGO') {
+            
+                this.gocheLibrary.gockePackageManager.getRequest(
+                    this.gocheLibrary.gockePackageManager.createRequest(
+                    this.method,
+                    this.headers.Authorization,
+                    this.path,
+                    this.data
+                ).requestID
+                )
+                .then(promiseData => {
+                    resolvePromise(promiseData)
+           
+                    this.gocheLibrary.dataManager.dataAPI = new DataBytes(promiseData).start().bytes
                 })
-                requestNew.write(Buffer.from(`${isObject === 'isObject' ? JSON.stringify(data) : data}`))
-                requestNew.end()
-            } catch (e) {
-                console.log(e)
+            } else {
+                try {    
+                    const requestNew = httpCreate.request({
+                        host: this.url,
+                        path: this.path,
+                        headers: this.headers,
+                        method: this.method,
+                    }, res => {
+                        const bufferDataArray = []
+                        res.on('data', (bufferData) => {
+                            const bufferMap = bufferData.toJSON().data
+                            bufferMap.map(e => {
+                                bufferDataArray.push(e)
+                            })          
+                        })
+    
+                        res.on('error', (error) => {
+                            res.removeAllListeners()
+                            throw error;
+                        })
+    
+                        res.on('close', () => {
+                            res.removeAllListeners()
+                            this.closed = true
+                        })
+    
+                        res.on('end', () => {
+                            res.removeAllListeners()
+                            this.end = true
+                            this.endLoading = Date.now()
+                            try {
+                            this.type = 'json'
+                                try {
+                                    this.gocheLibrary.dataAPI += new DataBytes(JSON.parse(Buffer.from(bufferDataArray).toString())).start().bytes
+                                } catch (ignore) {
+                                    
+                                }
+                            resolvePromise({
+                                statusCode: res.statusCode,
+                                data: JSON.parse(Buffer.from(bufferDataArray).toString())
+                            })
+                            bufferDataArray.map(e => bufferDataArray.pop())
+                            } catch (ThisisnotJSON) {
+                            resolvePromise({
+                                statusCode: res.statusCode,
+                                data: Buffer.from(bufferDataArray).toString()
+                            })
+                            bufferDataArray.map(e => bufferDataArray.pop())
+                            }
+                        })
+                    })
+                    requestNew.write(Buffer.from(`${isObject === 'isObject' ? JSON.stringify(data) : data}`))
+                    requestNew.end()
+                } catch (e) {
+                    console.log(e)
+                }
             }
             
         }) 
@@ -90,6 +110,21 @@ module.exports = class RequestBuilder {
 
     create() {
         return new Promise(resolvePromise => {
+            if (this.gocheLibrary.requestConfigBuilder.mode === 'requestGO') {
+                this.gocheLibrary.gockePackageManager.getRequest(
+                    this.gocheLibrary.gockePackageManager.createRequest(
+                    this.method,
+                    this.headers.Authorization,
+                    this.path,
+                    this.data
+                ).requestID
+                )
+                .then(promiseData => {
+                    resolvePromise(promiseData)
+                   
+                    this.gocheLibrary.dataManager.dataAPI = new DataBytes(promiseData).start().bytes
+                })
+            } else {
             try {
                 httpCreate.request({
                     host: this.url,
@@ -140,6 +175,7 @@ module.exports = class RequestBuilder {
             } catch (e) {
                 console.log(e)
             }
+             } 
         }) 
     }   
 }
