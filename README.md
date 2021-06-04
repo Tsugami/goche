@@ -3,7 +3,7 @@ This library was developed for API Discord that provides options and ways to wor
 
 ## Installation
 **Github**
-To install from Github, you need to install [Git] (https://git-scm.com/)
+To install from Github, you need to install [Git](https://git-scm.com/)
 
 `Install`:
 ```command
@@ -22,7 +22,7 @@ Goche is in development for now, there is no support for NPM.
 - You can disable events that you don't want to capture
 - Soon Goche will provide a personalized profile to have memory control.
 - Have control in the cache
-- 📦 Support for Goche-Cli (Custom and prepared Logger) [Click here](https://github.com/NavyCake/goche-cli)
+- ♾️ An API developed in Go that can manage requests and return to function. [Click Here](https://github.com/NavyCake/api-goche)
 - Support Typescript
 
 
