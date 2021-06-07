@@ -300,6 +300,19 @@ declare module 'goche' {
 		addListener(listener: GocheListener):this
 	}
 
+
+	export class GochePacketManager {
+		url: string
+		secret: string
+		ws: WebSocket
+
+		setURL(url: string): this
+	
+		setToken(secret: string): this
+		build(): this
+	}
+
+
 	export class IgnoreCacheManager {
 		cache: Map<string, string>
 		cacheSelected: Map<string, string>
