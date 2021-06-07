@@ -119,7 +119,7 @@ declare module 'goche' {
 		 *
 		 *
 		 */
-		createProfile(mode, ...shardInt): this
+		createProfile(mode?: string, ...shardInt): this
 
 		/**
      * @param {*} intents 
@@ -263,7 +263,6 @@ declare module 'goche' {
 		updateObjects: number
 		rateLimit: number
 	}
-
 	export class CacheManager {
 		changesObject: number
 		changesRevoked: number
@@ -290,17 +289,15 @@ declare module 'goche' {
 
 		queueRateLimit: Array<String>
 	}
-
-	/**
-	 * @deprecated
-	 */
 	export class HttpAPI {}
 
 	export class GocheListenerAdapter {
-		listeners: Array<any>
+		listeners: Array<GocheListener>
 		client: GocheClient
 		eventRegistered: number
 		eventCount: number
+
+		addListener(listener: GocheListener):this
 	}
 
 	export class IgnoreCacheManager {
@@ -313,7 +310,9 @@ declare module 'goche' {
 		client: GocheLibrary
 		eventRegistered: number
 		eventCount: number
+
 	}
+
 
 	export class Activities {
 		name: string
@@ -324,9 +323,25 @@ declare module 'goche' {
 		status: 'online'
 	}
 
-	export class IntentsManager {}
+	export class SelfUser {
+		user: User;
+		application: Application;
+		sessionID: string;
+		rtc_regions: Array;
+	}
 
-	export class RequestControlAction {}
+	export class IntentsManager {
+		intentsList: Intents
+		intentsSelected: Intents
+		intents: number
+	}
+
+	export class RequestControlAction {
+		queue: number
+		limitQueue: boolean
+		ignoreRequest: boolean
+		ignorePath: Array
+	}
 
 	/**
 	 * ENTITIES
@@ -335,13 +350,6 @@ declare module 'goche' {
 	/**
 	 *
 	 */
-
-	export class SelfUser {
-		user: User
-		application: Application
-		sessionID: string
-		rtc_regions: Array<any>
-	}
 
 	export class Application {
 		id: string
@@ -393,11 +401,17 @@ declare module 'goche' {
 		delete(): this
 	}
 
-	export class Embed {}
+	export interface Ban {
+		user: User
+		reason: reason
+		time: number
+	}
 
-	export class Emoji {
-		name: string
-		id: string
+	export class Embed {
+		title: string
+		description: string
+		fields: Array
+		author: object
 	}
 	export class Message {
 		gocheLibrary: GocheLibrary
@@ -423,9 +437,18 @@ declare module 'goche' {
 		messageQueue: MessageQueue
 	}
 
-	export class MessageQueue {}
+	export interface DataOptions {
+		embed: object
+	}
+	export class MessageQueue {
+		editMessage(data: DataOptions | string): Message
+		deleteMessage(time?: number): Message
+	}
 
-	export class TextChannel extends Channel {}
+	export class TextChannel extends Channel {
+		messagesQueue: MessageQueue
+		sendMessage(data: DataOptions | string): Message
+	}
 	export class VoiceChannel extends Channel {
 		userLimit: number
 		position: number
@@ -433,32 +456,31 @@ declare module 'goche' {
 	}
 
 	export class MessageFlags {}
-	export class Member {
-		user: User
-		roles: Map<string, Role>
-		pending: boolean
-		isPeding: boolean
-		nick: string
-		joinedAt: Date.parse
-		premiumSince: Date.parse
-		hoistedRole: Role
-		mute: boolean
-		deaf: boolean
-		voiceState: VoiceState
-	}
 
 	export class VoiceState {
-		type: 'voiceState'
-		voiceChannel: VoiceChannel
+		type = 'voiceState';
+		voiceChannel?: VoiceChannel
 		channelID: string
 		sessionID: string
 		selfVideo: boolean
 		selfMute: boolean
 		selfDeaf: boolean
-		requestToSpeakTimestamp: Data.parse
+		requestToSpeakTimestamp: string
 		mute: boolean
 		deaf: boolean
 		suppress: boolean
+	}
+	export class Member {
+		user: User
+		roles: ObjectManager<string, Role>;
+		pending: boolean
+		nick: string
+		joinedAt: number
+		premiumSince: number
+		hoistedRole: Role
+		mute: boolean
+		deaf: boolean
+		voiceState: VoiceState
 	}
 
 	export class User {
@@ -507,22 +529,54 @@ declare module 'goche' {
 		removeBan(member: Member): BanInfo
 	}
 
-	export class GuildPreview {
-		id: string
+	export class DMChannel extends Channel {
+		messagesQueue: MessageQueue
+		sendMessage(data: DataOptions | string): Message
+	}
+	export class AddBanAction {
 		guild: Guild
-		this: string
-		icon: string
-		splash: string
-		discoverySplash: string
-		emojis: Array<Emoji>
-		features: Array<any>
-		approximateMemberCount: number
-		approximatePresenceCount: number
-		description: string
+		gocheClient: GocheClient
+		user: User
+		reason: string
+		deleteMessageDays: number
+		time: number
+
+		setReason(reason: string): this
+	}
+	export class Role {
+		id: string
+		type = 'role';
+		name: string
+		isMentionable: boolean
+		managed: boolean
+		hoist: boolean
+		color: string
+		guild: Guild;
 	}
 
-	export class AddBanAction {}
-	export class Role {}
+
+	export class ReactionAddEvent {
+		userID: string
+        messageID: string
+        member: Member
+        emoji: Emoji
+        channelID: string
+        guild?: Guild
+	}
+
+	export class ReactionRemoveEvent {
+		userID: string
+        messageID: string
+        member: Member
+        emoji: Emoji
+        channelID: string
+        guild?: Guild
+	}
+
+	export class Emoji {
+		name?: string | null
+		id?: string | null 
+	}
 	export class PresenceMember {}
 
 	export class EmojiInfo {}
@@ -531,7 +585,9 @@ declare module 'goche' {
 		constructor(gocheClient: GocheClient)
 	}
 
-	export class OnGuildChannelStateEvent extends GocheListener {}
+
+	
+	export class OnGuildChannelStateEvent extends GocheListener {} 
 	export class OnMemberJoinChannel extends GocheListener {}
 	export class OnMemberLeaveChannelEvent extends GocheListener {}
 	export class OnChannelCreateEvent extends GocheListener {}
@@ -564,4 +620,7 @@ declare module 'goche' {
 	export class GocheListener<R> {
 		on(data: any): void
 	}
+
+
+
 }
