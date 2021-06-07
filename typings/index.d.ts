@@ -80,7 +80,6 @@ declare module 'goche' {
 		listenerManager: GocheListenerAdapter
 		requestManager: HttpAPI
 		gocheController: GocheController
-		slashManager: SlashManager
 		activities: Activities
 		intentManager: IntentsManager
 		dataManager: DataManager
@@ -292,12 +291,12 @@ declare module 'goche' {
 	export class HttpAPI {}
 
 	export class GocheListenerAdapter {
-		listeners: Array<GocheListener>
+		listeners: Array<GocheListener<any>>
 		client: GocheClient
 		eventRegistered: number
 		eventCount: number
 
-		addListener(listener: GocheListener):this
+		addListener(listener: GocheListener<any>):this
 	}
 
 
@@ -332,7 +331,7 @@ declare module 'goche' {
 		type: string
 		url: string
 		details: string
-		since: Date.now
+		since: string
 		status: 'online'
 	}
 
@@ -340,7 +339,7 @@ declare module 'goche' {
 		user: User;
 		application: Application;
 		sessionID: string;
-		rtc_regions: Array;
+		rtc_regions: Array<any>;
 	}
 
 	export class IntentsManager {
@@ -353,7 +352,7 @@ declare module 'goche' {
 		queue: number
 		limitQueue: boolean
 		ignoreRequest: boolean
-		ignorePath: Array
+		ignorePath: Array<string>
 	}
 
 	/**
@@ -416,14 +415,14 @@ declare module 'goche' {
 
 	export interface Ban {
 		user: User
-		reason: reason
+		reason: string
 		time: number
 	}
 
 	export class Embed {
 		title: string
 		description: string
-		fields: Array
+		fields: Array<any>
 		author: object
 	}
 	export class Message {
@@ -459,7 +458,6 @@ declare module 'goche' {
 	}
 
 	export class TextChannel extends Channel {
-		messagesQueue: MessageQueue
 		sendMessage(data: DataOptions | string): Message
 	}
 	export class VoiceChannel extends Channel {
@@ -471,7 +469,7 @@ declare module 'goche' {
 	export class MessageFlags {}
 
 	export class VoiceState {
-		type = 'voiceState';
+		type: 'voiceState';
 		voiceChannel?: VoiceChannel
 		channelID: string
 		sessionID: string
@@ -543,7 +541,6 @@ declare module 'goche' {
 	}
 
 	export class DMChannel extends Channel {
-		messagesQueue: MessageQueue
 		sendMessage(data: DataOptions | string): Message
 	}
 	export class AddBanAction {
@@ -558,7 +555,7 @@ declare module 'goche' {
 	}
 	export class Role {
 		id: string
-		type = 'role';
+		type: 'role';
 		name: string
 		isMentionable: boolean
 		managed: boolean
@@ -598,42 +595,33 @@ declare module 'goche' {
 		constructor(gocheClient: GocheClient)
 	}
 
+	export class OnGuildChannelStateEvent extends GocheListener<any> {} 
+	export class OnMemberJoinChannel extends GocheListener<any> {}
+	export class OnMemberLeaveChannelEvent extends GocheListener<any> {}
+	export class OnChannelCreateEvent extends GocheListener<Channel> {}
+	export class OnChannelDeleteEvent extends GocheListener<Channel> {}
+	export class OnChannelUpdateEvent extends GocheListener<Channel> {}
+	export class OnGuildBanRemove extends GocheListener<Ban> {}
+	export class OnGuildInteractionEvent extends GocheListener<any> {}
+	export class OnGuildMemberAddEvent extends GocheListener<Member> {}
+	export class OnGuildMessageEvent extends GocheListener<Message> {}
+	export class OnGuildRemove extends GocheListener<any> {}
+	export class OnGuildMessageEditEvent extends GocheListener<Message> {}
+	export class OnGuildRoleCreateEvent extends GocheListener<Role> {}
+	export class OnGuildRoleDeleteEvent extends GocheListener<Role> {}
+	export class OnGuildRoleUpdateEvent extends GocheListener<Role> {}
+	export class OnMessageReactionAddEvent extends GocheListener<ReactionAddEvent> {}
+	export class OnMessageReactionRemoveEvent extends GocheListener<ReactionRemoveEvent> {}
+	export class OnMessageReactionUpdateEvent extends GocheListener<any> {}
+	export class ShardingCloseCode extends GocheListener<any> {}
+	export class ShardingCreating extends GocheListener<any> {}
+	export class ShardingDebug extends GocheListener<any> {}
+	export class ShardingDisconnect extends GocheListener<any> {}
+	export class ShardingQueue extends GocheListener<any> {}
+	export class ShardingReconnecting extends GocheListener<any> {}
 
-	
-	export class OnGuildChannelStateEvent extends GocheListener {} 
-	export class OnMemberJoinChannel extends GocheListener {}
-	export class OnMemberLeaveChannelEvent extends GocheListener {}
-	export class OnChannelCreateEvent extends GocheListener {}
-	export class OnChannelDeleteEvent extends GocheListener {}
-	export class OnChannelUpdateEvent extends GocheListener {}
-	export class OnChannelUpdateEvent extends GocheListener {}
-	export class OnGuildBanRemove extends GocheListener {}
-	export class OnGuildMessageEvent extends GocheListener {}
-	export class OnGuildInteractionEvent extends GocheListener {}
-	export class OnGuildMemberAddEvent extends GocheListener {}
-	export class OnGuildMemberAddEvent extends GocheListener {}
-	export class OnGuildMessageEditEvent extends GocheListener {}
-	export class OnGuildMessageEvent extends GocheListener {}
-	export class OnGuildMessageEvent extends GocheListener {}
-	export class OnGuildRemove extends GocheListener {}
-	export class OnGuildMessageEditEvent extends GocheListener {}
-	export class OnGuildRoleCreateEvent extends GocheListener {}
-	export class OnGuildRoleDeleteEvent extends GocheListener {}
-	export class OnGuildRoleUpdateEvent extends GocheListener {}
-	export class OnMessageReactionAddEvent extends GocheListener {}
-	export class OnMessageReactionRemoveEvent extends GocheListener {}
-	export class OnMessageReactionUpdateEvent extends GocheListener {}
-	export class ShardingCloseCode extends GocheListener {}
-	export class ShardingCreating extends GocheListener {}
-	export class ShardingDebug extends GocheListener {}
-	export class ShardingDisconnect extends GocheListener {}
-	export class ShardingQueue extends GocheListener {}
-	export class ShardingReconnecting extends GocheListener {}
-
-	export class GocheListener<R> {
-		on(data: any): void
+	export class GocheListener<T> {
+		on(data: T): void
 	}
-
-
 
 }
